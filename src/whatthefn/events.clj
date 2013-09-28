@@ -7,12 +7,6 @@
   [game-id]
   (alter game-channels assoc game-id (chan 10)))
 
-(defn ensure-game-exists
-  [game-id]
-  (dosync
-    (when-not (@game-channels game-id)
-      (new-game! game-id))))
-
 (defn start-dummy-writer
   [game-id]
   (let [channel (@game-channels game-id)]
@@ -23,10 +17,16 @@
                                   (Thread/sleep 5000)
                                   )))))
 
+(defn ensure-game-exists
+  [game-id]
+  (dosync
+    (when-not (@game-channels game-id)
+      (new-game! game-id)
+      (start-dummy-writer game-id))))
+
 (defn game-channel
   [game-id]
   (ensure-game-exists game-id)
-  (start-dummy-writer game-id)
   (@game-channels game-id))
 
 (defn example
