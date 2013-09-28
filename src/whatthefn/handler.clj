@@ -6,8 +6,8 @@
             [hiccup.element :as elem]
             [ring.middleware.edn :as edn-params]
             [ring.util.response :as response]
+            [whatthefn.messages :as messages]
             [whatthefn.submit]))
-
 
 (defn test-edn []
   {:body (pr-str {:this :is :a :test})
@@ -35,7 +35,10 @@
   (GET "/test" [] (test-page))
   (GET "/edn-test" [] (test-edn))
   (POST "/submit-fn" [code] (whatthefn.submit/submit-fn code))
-
+  (GET "/rooms/:room-id/messages" {{room-id :room-id since :since} :params}
+       (whatthefn.submit/edn-response (messages/messages-since room-id since)))
+  (POST "/rooms/:room-id/messages" {{room-id :room-id message :message} :params}
+        (whatthefn.submit/edn-response (messages/new-message! room-id {:str message})))
   (route/resources "/")
   (route/not-found "Not Found"))
 
