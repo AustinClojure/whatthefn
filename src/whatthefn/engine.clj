@@ -16,11 +16,8 @@
 
 ;;outgoing messages
 
-(defn send-join-confirm [room-id player-name]
-  (msgs/new-message! room-id {:type :join-confirm :room room-id :player player-name}))
-
-(defn send-join-reject [room-id player-name]
-  (msgs/new-message! room-id {:type :join-reject :room room-id :player player-name}))
+(defn send-player-in-room [room-id player-name status]
+  (msgs/new-message! room-id {:type :player-in-room? :room room-id :player player-name :in-room? status}))
 
 (defn send-fn-resolve-result [input output room-id]
   (msgs/new-message! room-id {:type :resolve-input :input input :output output}))
@@ -40,24 +37,29 @@
 ;;state util
 
 (defn num-players [state room-id]
+  "return the number of players in the room"
   (let [rooms (:rooms state)
         room (rooms room-id)]
     (count (:players room))))
 
 (defn num-winners [state room-id]
+  "return the number of players that have won the round"
   (let [rooms (:rooms state)
         room (rooms room-id)]
     (count (:winners room))))
 
 (defn get-score-value [state room-id]
+  "returns how many points it is worth to score now"
   (+ 2 (- (num-players) (num-winners))))
 
 (defn player-in-room? [state room-id player]
+  "returns true if a player is in the given room"
   (let [rooms (:rooms state)
         room (rooms room-id)]
     (contains? (:players room) player)))
 
-(defn check-room-full [state room-id]
+(defn room-full? [state room-id]
+  "return true if the room is full"
   (= 4 (num-players state room-id)))
 
 (defn player-winner? [state room-id player-id]
@@ -77,10 +79,6 @@
       (update-in state [:rooms room-id :players] #(conj % player-name))
       state)))
 
-(defn player-join-attempt [room-id player-name state]
-  (let [rooms (:rooms state)
-        room (rooms room-id)]))
-
 (defn player-won [state player-id]
   "the player correctly answered...if all players have answered, end round"
   ())
@@ -93,7 +91,8 @@
 
 (defn reset-round [state room-id]
   (let [winners-cleared (clear-winners state room-id)
-        function-added ()]))
+        function-added (refresh-function winners-cleared room-id)]
+    function-added))
 
 ;;message processing
 
@@ -117,6 +116,14 @@
     (if res
       (player-won state player)
       state)))
+
+(defmethod proc-message :player-join-attempt [state msg]
+  (let [room-id (:room msg)
+        player-name (:player msg)
+        new-room (add-player-room state room-id player-name)]
+    (send-player-in-room room-id player-name (player-in-room? state room-id player-name))))
+
+(defmethod proc-message :player-left [state msg])
 
 (defn get-lazy-seq-http [])
 
