@@ -1,0 +1,50 @@
+@import url("layout.css");
+
+/* ACE EDITOR */
+#editor { position: relative !important;
+          border: 1px solid lightgray;
+          margin-top: 0px; /* Navbars @ ~43px */
+          height: 500px;
+          width: 100%;
+          padding: 0 0 0 0;          
+        }
+#editor.fullScreen { height: auto;
+                     width: auto;
+                     border: 0;
+                     margin: 0;
+                     position: fixed !important;
+                     top: 0;
+                     bottom: 0;
+                     left: 0;
+                     right: 0;
+                     z-index: 10;
+
+                   }
+
+.fullScreen { overflow: hidden
+            }
+
+.scrollmargin { height: 50px;
+                text-align: center;
+              }
+
+.large-button { color: lightblue;
+                cursor: pointer;
+                font: 30px arial;
+                padding: 20px;
+                text-align: center;
+                border: medium solid transparent;
+                display: inline-block;
+              }
+.large-button:hover { border: medium solid lightgray;
+                      border-radius: 10px 10px 10px 10px;
+                      box-shadow: 0 0 12px 0 lightblue;
+                    }
+
+
+/* CHAT WINDOW */
+#chat_window { margin-top: 0px; /* Navbars @ ~43px */
+               margin-left: -5px;
+               padding: 0 0 0 0;
+               width: 100%;
+ } 
