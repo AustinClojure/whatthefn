@@ -8,6 +8,7 @@
 
   var MessageQueue = Backbone.Model.extend({
     defaults: {
+      'isStopped': false,
       'roomId': 'room-a',
       'pollInterval': 2500,
       'handlerFunction': function() {}
@@ -18,10 +19,19 @@
     },
 
     start: function() {
+      this.set('isStopped', false);
       this.poll();
     },
 
+    stop: function() {
+      this.set('isStopped', true);
+    },
+
     poll: function() {
+      if (this.get('isStopped')) {
+        console.log('Message queue is stopped. Restart it by calling the start() method');
+        return;
+      }
       var params = this.get('messages').isEmpty() ? {} : {since: this.latestMessageId()};
 
       $.getJSON(this.messagesPath(), params, _.bind(this.addMessages, this));
