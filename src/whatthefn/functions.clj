@@ -45,7 +45,7 @@
   #{'("a friend of lucas" :numeral fib "our first function" #{2 5 10})
     '("a prime problem" :numeral prime-factors "second function" #{7 9 24 12 30})
     '("what's the opposite of gestalt?" :numeral sum-prime-factors "third function" #{7 9 8 24 12 30})
-    '("a matter of fact" :numeral factorial "4th function" {2 5 3})})
+    '("a matter of fact" :numeral factorial "4th function" #{2 5 3})})
 
 (defn build-function [id [fname type body desc tests]]
   {:name fname :type type :id id :body body :description desc :tests tests})

@@ -28,13 +28,19 @@
 (defn send-fn-answer-result [room-id player-name result]
   (msgs/new-message! room-id {:type :grade-answer :player player-name :room room-id :result result}))
 
+(defn send-finish-round [room-id]
+  (msgs/new-message! room-id {:type :finish-round :room room-id}))
+
 ;;state updates(engine logic)
+
+(defn add-player-room [room-id player-name state])
 
 (defn player-join-attempt [room-id player-name state]
   (let [rooms (:rooms state)
         room (rooms roomid)]))
 
-(defn add-player-room [room-id player-name state])
+(defn player-won []
+  "the player correctly answered...if all players have answered, end round")
 
 ;;message processing
 
@@ -45,7 +51,7 @@
         player (:player msg)
         arg (:arg msg)
         id (:func-id msg)]
-    (send-fn-resolve-result arg (whatthefn.functions/eval-function id arg) room)
+    (send-fn-resolve-result arg (fxns/eval-function id arg) room)
     state))
 
 (defmethod proc-message :test-answer [state msg]
@@ -56,10 +62,10 @@
         res (fxns/test-function id f)]
     (send-fn-answer-result room player res)
     (if res
-
+      (player-won state player)
       state)))
 
-(defn get-seq [])
+(defn get-lazy-seq-http [])
 
 (defn start-engine []
-  (reduce proc-message state (get-seq)))
+  (reduce proc-message state (get-lazy-seq-http)))
