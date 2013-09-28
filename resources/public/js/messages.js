@@ -1,13 +1,24 @@
 (function($) {
-
   var Message = Backbone.Model.extend({
     getChatString: function() {
       return 'Message id ' + this.get('id') + ': Time: ' + this.get('server-time-unix-millis');
     }
   });
 
+  var ChatMessage = Backbone.Model.extend({
+    getChatString: function() {
+      return 'Chat Message!';
+    }
+  });
+
   var Messages = Backbone.Collection.extend({
-    model: Message
+    model: function(attrs, options) {
+      if (attrs.type == 'chat') {
+        return new ChatMessage(attrs, options);
+      } else {
+        return new Message(attrs, options);
+      }
+    }
   });
 
   var MessageQueue = Backbone.Model.extend({

@@ -10,4 +10,5 @@
 
 (defn handler
   [req]
-  (cond (= "chat" (:type (:params req))) (chat (:params req))))
+  (case (:type (:params req))
+    "chat" (chat (:params req))))
