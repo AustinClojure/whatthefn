@@ -5,7 +5,7 @@
             [hiccup.page :as page]
             [hiccup.element :as elem]
             [ring.middleware.edn :as edn-params]
-
+            [ring.util.response :as response]
             [whatthefn.submit]))
 
 
@@ -31,7 +31,8 @@
 
 
 (defroutes app-routes
-  (GET "/" [] (test-page))
+  (GET "/" [] (response/redirect "/app.html"))
+  (GET "/test" [] (test-page))
   (GET "/edn-test" [] (test-edn))
   (POST "/submit-fn" [code] (whatthefn.submit/submit-fn code))
 
