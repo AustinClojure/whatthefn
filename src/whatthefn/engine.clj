@@ -16,7 +16,7 @@
 ;;outgoing messages
 
 (defn send-player-in-room [room-id player-name status]
-  (msgs/new-message! room-id {:type :player-in-room? :room room-id :player player-name :in-room? status}))
+  (msgs/new-message! room-id {:type :player-in-room :room room-id :player player-name :in-room? status}))
 
 (defn send-fn-resolve-result [room-id input output]
   (msgs/new-message! room-id {:type :resolve-input :input input :output output}))
