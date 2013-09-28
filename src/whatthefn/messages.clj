@@ -24,7 +24,8 @@
   (dosync
     (let [message-with-id (annotate-message-with-metadata message)]
       (alter (@room-messages room-id) conj message-with-id)
-      {:id (:id message-with-id)})))
+      {:room-id room-id
+       :id (:id message-with-id)})))
 
 (defn messages-since
   "Returns all messages in the provided room-id that have happened since the

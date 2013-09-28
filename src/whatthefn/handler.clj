@@ -9,6 +9,7 @@
             [ring.middleware.session.memory :as mem]
             [ring.util.response :as response]
             [whatthefn.messages :as messages]
+            [whatthefn.gameapi :as gameapi]
             [whatthefn.submit]))
 
 (defn json-response [data]
@@ -49,6 +50,8 @@
        (comp json-response messages/get-messages))
   (POST "/rooms/:room-id/messages" {{room-id :room-id message :message} :params}
         (json-response (messages/new-message! room-id {:str message})))
+  (POST "/rooms/:room-id/events" {{room-id :room-id message :message} :params}
+        (comp json-response gameapi/handler))
 
   (GET "/counter" [] counter)
 
