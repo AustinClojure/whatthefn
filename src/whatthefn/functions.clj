@@ -22,6 +22,16 @@
         (recur (conj acc t) 2 (/ rem t))
         (recur acc (inc t) rem)))))
 
+(defn sum-prime-factors [n]
+  (reduce + (prime-factors n)))
+
+(defn factorial [n]
+  (loop [rem n
+         tot 1]
+    (if (<= rem 0)
+      tot
+      (recur (dec rem) (* tot rem)))))
+
 (defn get-alpha[letter]
   "returns the index in the alphabet of the letter, i.e. A->1 (case insensitive)"
   (- (int (clojure.string/upper-case letter)) 64))
@@ -33,7 +43,9 @@
 
 (def function-bases
   #{'("a friend of lucas" :numeral fib "our first function")
-    '("a prime problem" :numeral prime-factors "second function")})
+    '("a prime problem" :numeral prime-factors "second function")
+    '("what's the opposite of gestalt?" :numeral sum-prime-factors "third function")
+    '("a matter of fact" :numeral factorial "4th function")})
 
 (defn build-function [id [fname type body desc]]
   {:name fname :type type :id id :body body :description desc})
