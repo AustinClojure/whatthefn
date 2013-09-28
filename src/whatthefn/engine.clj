@@ -28,19 +28,29 @@
 (defn send-fn-answer-result [room-id player-name result]
   (msgs/new-message! room-id {:type :grade-answer :player player-name :room room-id :result result}))
 
-(defn send-finish-round [room-id]
-  (msgs/new-message! room-id {:type :finish-round :room room-id}))
+(defn send-round-ends [room-id]
+  (msgs/new-message! room-id {:type :round-ends :room room-id}))
 
-(defn send-round-begin [room-id round-data]
-  (msgs/new-message! room-id {:type :round-begin :room room-id :round-data round-data}))
+(defn send-round-begins [room-id round-data]
+  (msgs/new-message! room-id {:type :round-begins :room room-id :round-data round-data}))
 
-(defn send-player-scored [room-id player-id num-points])
+(defn send-player-scored [room-id player-name num-points]
+  (msgs/new-message! room-id {:type :player-scored :room room-id :player player-name :points num-points}))
 
 ;;state util
+
 (defn num-players [state room-id]
   (let [rooms (:rooms state)
         room (rooms room-id)]
     (count (:players room))))
+
+(defn num-winners [state room-id]
+  (let [rooms (:rooms state)
+        room (rooms room-id)]
+    (count (:winners room))))
+
+(defn get-score-value [state room-id]
+  (+ 2 (- (num-players) (num-winners))))
 
 (defn player-in-room? [state room-id player]
   (let [rooms (:rooms state)
@@ -51,6 +61,7 @@
   (= 4 (num-players state room-id)))
 
 (defn player-winner? [state room-id player-id]
+  "is this player alread a winner for this round?"
   (let [rooms (:rooms state)
         room (rooms room-id)
         winners (:winners room)]
@@ -71,7 +82,18 @@
         room (rooms room-id)]))
 
 (defn player-won [state player-id]
-  "the player correctly answered...if all players have answered, end round")
+  "the player correctly answered...if all players have answered, end round"
+  ())
+
+(defn refresh-function [state room-id]
+  (update-in state [:rooms room-id :current-func] fxns/get-next-function))
+
+(defn clear-winners [state room-id]
+  (update-in state [:rooms room-id :winners] #{}))
+
+(defn reset-round [state room-id]
+  (let [winners-cleared (clear-winners state room-id)
+        function-added ()]))
 
 ;;message processing
 
