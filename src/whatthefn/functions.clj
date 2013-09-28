@@ -51,12 +51,8 @@
   {:name fname :type type :id id :body body :description desc :tests tests})
 
 (defn build-all-functions [bases]
-  (loop [x 0
-         bs bases
-         acc {}]
-    (if (empty? bs)
-      acc
-      (recur (inc x) (rest bases) (assoc acc x (build-function x (first bases)))))))
+  (zipmap (range)
+          (map build-function (range) bases)))
 
 (def function-map (build-all-functions function-bases))
 
