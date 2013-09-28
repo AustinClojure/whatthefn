@@ -1,7 +1,7 @@
 (ns whatthefn.engine
-  :use [whatthefn.functions :as fxns]
-       [whatthefn.messages :as msgs]
-       [whatthefn.events :as evs])
+  (:use [whatthefn.functions :as fxns]
+        [whatthefn.messages :as msgs]
+        [whatthefn.events :as evs]))
 
 ;;initialize state
 
@@ -12,19 +12,19 @@
   {:name name :score 0})
 
 (defn get-initial-state []
-  {:rooms {"the-room" (new-room :the-room)
-           :players #{}}})
+  {:rooms {"the-room" (new-room :the-room)}
+   :channel nil})
 
 ;;outgoing messages
 
 (defn send-player-in-room [room-id player-name status]
   (msgs/new-message! room-id {:type :player-in-room? :room room-id :player player-name :in-room? status}))
 
-(defn send-fn-resolve-result [input output room-id]
+(defn send-fn-resolve-result [room-id input output]
   (msgs/new-message! room-id {:type :resolve-input :input input :output output}))
 
-(defn send-fn-answer-result [room-id player-name result]
-  (msgs/new-message! room-id {:type :answer-solution :player player-name :room room-id :result result :points-awarded}))
+(defn send-fn-answer-result [room-id player-name result points]
+  (msgs/new-message! room-id {:type :answer-solution :player player-name :room room-id :result result :points-awarded points}))
 
 (defn send-round-ends [room-id]
   (msgs/new-message! room-id {:type :round-ends :room room-id}))
@@ -35,12 +35,17 @@
 (defn send-player-scored [room-id player-name num-points]
   (msgs/new-message! room-id {:type :player-scored :room room-id :player player-name :points num-points}))
 
+;;self messages
+
+(defn send-message-self [channel message]
+  (>!! channel message))
+
 ;;state util
 
 (defn get-current-function [state room-id]
   (let [rooms (:rooms state)
-        room (rooms room-id)
-        (:current-func room)]))
+        room (rooms room-id)]
+    (:current-func room)))
 
 (defn num-players [state room-id]
   "return the number of players in the room"
@@ -78,17 +83,17 @@
     0))
 
 (defn everyone-won? [state room-id]
-  (let [winners (get-in state [:rooms room-id winners])
-        players (get-in state [:rooms room-id players])
-        (empty? (clojure.set/difference players winners))]))
+  (let [winners (get-in state [:rooms room-id :winners])
+        players (get-in state [:rooms room-id :players])]
+    (empty? (clojure.set/difference players winners))))
 
 ;;state updates(engine logic)
 
 (defn remove-player-room [state room-id player-name]
   (let [rooms (:rooms state)
         room (rooms room-id)
-        players (:players room)
-        (update-in state [:rooms room-id :players] (disj (get-in state [:rooms room-id :players]) player-name))]))
+        players (:players room)]
+    (update-in state [:rooms room-id :players] (disj (get-in state [:rooms room-id :players]) player-name))))
 
 (defn add-player-room [state room-id player-name]
   (let [rooms (:rooms state)
@@ -111,7 +116,7 @@
 
 (defn player-won [state room-id player]
   (let [new-room (update-in state [:rooms room-id :winners] conj player)]
-    (if (everyone-won? new-roow room-id)
+    (if (everyone-won? new-room room-id)
       (send-round-ends room-id)
       new-room)))
 
@@ -137,6 +142,8 @@
     (send-fn-answer-result room player res points-scored)
     (player-won state room player)))
 
+(defmethod proc-message :function-eval-result)
+
 (defmethod proc-message :player-join-attempt [state msg]
   (let [room-id (:room msg)
         player-name (:player msg)
@@ -150,8 +157,6 @@
         new-room (remove-player-room state player-name room-id)]
     new-room))
 
-(defn get-lazy-seq-http [])
-
 (defn start-engine []
   (let [game-channel (evs/game-channel :my-game-id)
         state-transition-function proc-message]
@@ -161,6 +166,3 @@
           (prn next-event)
           ;write broadcast message here
           (recur (state-transition-function game-state next-event)))))))
-
-(defn start-engine []
-  (reduce proc-message (get-initial-state) (get-lazy-seq-http)))
