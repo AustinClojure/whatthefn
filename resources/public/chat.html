@@ -132,7 +132,7 @@
       new MessageQueue({
         roomId: 'room-a',
         handlerFunction: function(message) {
-          console.log(message);
+          console.log(message.getChatString());
         }
       }).start();
     }

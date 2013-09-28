@@ -1,6 +1,10 @@
 (function($) {
 
-  var Message = Backbone.Model.extend();
+  var Message = Backbone.Model.extend({
+    getChatString: function() {
+      return 'Message id ' + this.get('id') + ': Time: ' + this.get('server-time-unix-millis');
+    }
+  });
 
   var Messages = Backbone.Collection.extend({
     model: Message
@@ -16,6 +20,7 @@
 
     initialize: function() {
       this.set('messages', new Messages());
+      this.get('messages').on('add', this.handleNewMessage, this);
     },
 
     start: function() {
@@ -49,7 +54,10 @@
 
     addMessages: function(messages) {
       this.get('messages').add(messages);
-      _.each(messages, this.get('handlerFunction'))
+    },
+
+    handleNewMessage: function(message) {
+      this.get('handlerFunction').call(null, message);
     }
   });
 
