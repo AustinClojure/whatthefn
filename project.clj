@@ -9,6 +9,7 @@
                  [clojail "1.0.6"]
                  [cheshire "5.2.0"]
                  [clj-time "0.6.0"]
+                 [org.clojure/core.async "0.1.222.0-83d0c2-alpha"]
 
                  [org.clojure/clojurescript "0.0-1877"]
                  [cljs-ajax "0.2.0"]
