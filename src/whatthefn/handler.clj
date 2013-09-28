@@ -4,7 +4,9 @@
             [compojure.route :as route]
             [hiccup.page :as page]
             [hiccup.element :as elem]
-            [ring.middleware.edn :as edn-params]))
+            [ring.middleware.edn :as edn-params]
+            [ring.util.response :as response]
+            [whatthefn.submit]))
 
 
 (defn test-edn []
@@ -20,15 +22,21 @@
   (layout "What The FN"
           [:h1 "What the FN test page"]
           [:p "This is a quick example"]
+          [:textarea#fnin {:type :textarea}]
+          [:br]
+          [:input#fnout {:type :text}]
+          [:button#submittest "Test"]
           (page/include-js "/js/wtfn.js")
           (elem/javascript-tag "whatthefn.core.init();")))
 
 
 (defroutes app-routes
-  (GET "/" [] (test-page))
+  (GET "/" [] (response/redirect "/app.html"))
+  (GET "/test" [] (test-page))
+  (GET "/edn-test" [] (test-edn))
+  (POST "/submit-fn" [code] (whatthefn.submit/submit-fn code))
 
   (route/resources "/")
-  (GET "/edn-test" [] (test-edn))
   (route/not-found "Not Found"))
 
 (def app
