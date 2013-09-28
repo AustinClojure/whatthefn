@@ -21,16 +21,45 @@
     result-text))
 
 
+
+(def current-fn (atom {:fn (fn [x] (* x x))
+                       :tests [1 2 5 10 15 -4 0]}))
+
+(defn find-the-fn [sandbox]
+  (try
+    (sandbox 'the-fn)
+    (catch Exception e
+      nil)))
+
+(defn test-the-fn [sandbox]
+  (let [[real-fn test-cases] ((juxt :fn :tests) @current-fn)
+        test-val (fn [val]
+                   (try
+                     (= (real-fn val)
+                        (sandbox (list 'the-fn val)))
+                     (catch Exception e
+                       (println "eval error val " val)
+                       false)))]
+    (every? test-val test-cases)))
+
 (defn submit-fn [code]
   (try
-    (edn-response {:result (eval-code (sb/sandbox) code)})
+    (let [sandbox (sb/sandbox)
+          eval-result (eval-code sandbox code)
+          the-fn (find-the-fn sandbox)]
+
+      (println "XXX" code)
+      (if the-fn
+        (edn-response {:result (test-the-fn sandbox)})
+        (edn-response {:result "the-fn not found"})))
+
     (catch Exception e
       (edn-response {:result (.getMessage e)}))))
 
 
 (defn submit-value [value-str]
   (let [sandbox (sb/sandbox)]
-    (sandbox '(def the-fn whatthefn.functions/fib))
+    (sandbox '(def the-fn (fn [x] (* x x))))
 
     (try
       (edn-response {:result (sandbox (list 'the-fn (clojure.edn/read-string value-str)))})
@@ -47,3 +76,4 @@
           (assoc :session new-sesion))
       (catch Exception e
         (edn-response {:result (.getMessage e)})))))
+

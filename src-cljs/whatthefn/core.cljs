@@ -8,8 +8,8 @@
 
 (defn out-field [resp]
   (.log js/console "RESP!" (pr-str (:result resp)))
-  (-> (sel1 :#fnout)
-      (dommy/set-value! (pr-str (:result resp)))))
+  (-> (sel1 :#statusbox)
+      (dommy/append! (str "Result: " (pr-str (:result resp))))))
 
 (defn send-fn [fn-text]
   (ajax/POST "/submit-fn"
@@ -18,9 +18,9 @@
               :handler out-field}))
 
 (defn submit-clicked []
-  (send-fn (dommy/value (sel1 :#fnin))))
+  (send-fn (.getValue js/editor)))
 
 (defn ^:external init []
   (.log js/console "starting")
-  (-> (sel1 :#submittest)
+  (-> (sel1 :#submitbutton)
       (dommy/listen! :click submit-clicked)))

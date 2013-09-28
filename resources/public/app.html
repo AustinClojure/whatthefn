@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <title>What The &#131n!</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Clojure programming game.">
     <meta name="author" content="What The Fn!">
@@ -15,29 +16,41 @@
 
     <div class="container-fluid">      
       <div class="row-fluid">
-        <div class="span12">
-          <pre id="editor">;Ace Code Editor
-          </pre><!--/#editor -->
-        </div><!--/.span12-->       
+        <div class="span9">
+          <pre id="editor">;Ace Code Editor</pre>
+        </div><!--/.span9-->   
+
+        <!-- STATUS WINDOW ================================================================= -->
+        <div class="span3">
+          <textarea id="statusbox" rows="20" readonly>My Other Text</textarea>
+        </div><!--span3-->
+  
       </div><!-- /.row -->
 
 <!-- ROW UNDER EDITOR ================================================================================ -->
-      <div class="row">
-        <div class="span1">
-          <button  id="submitbutton" type="button" class="btn btn-primary">Submit</button>
-        </div><!--/. **Submit button span **-->
-        <div class="dropdown span1">
-          <a id="theme_selector" class="dropdown-toggle" data-toggle="dropdown" href="#">Theme<b class="caret"></b></a>
-          <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-            <li>Twilight</li>
-            <li>Chrome</li>
-          </ul>
-        </div><!-- dropdown row_under_editor span1 -->
-    </div><!-- /.container -->
+<div class="row-fluid">
+  <div class="span1">
+    <button  id="submitbutton" type="button" class="btn btn-small btn-primary">Submit</button>
+  </div><!--/. **Submit button span **-->
+  <div class="dropdown span1">
+    <a id="theme_selector" class="dropdown-toggle" data-toggle="dropdown" href="#">Theme<b class="caret"></b></a>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+      <li>Twilight</li>
+      <li>Chrome</li>
+    </ul>
+  </div><!-- dropdown row_under_editor span1 -->
+</div><!--/.span12-->
+
+<div class="row-fluid">
+  <div class="span12">  
+    <textarea id="repl" rows="10" readonly>My Text</textarea>  
+  </div><!--/.row-->
+</div><!-- /.container -->
 
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/src/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/src/ace.js" type="text/javascript" charset="UTF-8"></script>
+    <script src="js/wtfn.js"></script>
 
     <!-- FROM THE ACE scrollable-page DEMO ============================================== -->
     <script>
@@ -113,6 +126,8 @@
         }
         themes = [].concat(themes.bright, themes.dark)
         setTimeout(function(){ window.scrollTo(0,0) }, 10)
+
+        whatthefn.core.init()
 
     </script>
 
