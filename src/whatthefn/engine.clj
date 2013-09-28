@@ -1,14 +1,14 @@
 (ns whatthefn.engine)
 
 (defn new-room [name]
-  {:the-room {:name name :current-func nil :seen-functions '() :player-names '() :state :waiting-for-players}})
+  {:name name :current-func nil :seen-functions '() :player-names '() :state :waiting-for-players})
 
-;;incoming messages
+(defn new-player [name]
+  {:name name :score 0})
 
-(defn player-join-attempt [room-id player-name state]
-  (let [room (rooms room-id)]))
-
-(defn add-player-room [room-id player-name state])
+(defn get-initial-state []
+  {:rooms {:the-room (new-room :the-room)
+           :players #{}}})
 
 ;;outgoing messages
 
@@ -24,20 +24,34 @@
 (defn send-fn-answer-result [room-id player-name result]
   (whatthefn.messages/new-message! room-id {:type :grade-answer :player player-name :room room-id :result result}))
 
+;;state updates/incoming messages
+
+(defn player-join-attempt [room-id player-name state]
+  (let [rooms (:rooms state)
+        room (rooms roomid)]))
+
+(defn add-player-room [room-id player-name state])
+
+
 (defmulti proc-message :type)
 
-(defmethod proc-message :resolve-input [msg]
+(defmethod proc-message :resolve-input [state msg]
   (let [room (:room msg)
         player (:player msg)
         arg (:arg msg)
         id (:func-id msg)]
-    (send-fn-resolve-result arg (whatthefn.functions/eval-function id arg) room)))
+    (send-fn-resolve-result arg (whatthefn.functions/eval-function id arg) room)
+    state))
 
-(defmethod proc-message :test-answer [msg]
+(defmethod proc-message :test-answer [state msg]
   (let [f (:function msg)
         room (:room msg)
         player (:player msg)
-        id (:func-id msg)]
-    (send-fn-answer-result room player (whatthefn.functions/test-function id f))))
+        id (:func-id msg)
+        res (whatthefn.functions/test-function id f)]
+    (send-fn-answer-result room player res)
+    (if res
+
+      state)))
 
 (defn start-engine [])
