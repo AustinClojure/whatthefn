@@ -34,6 +34,7 @@
   (GET "/" [] (response/redirect "/app.html"))
 
   (POST "/submit-fn" [code] (whatthefn.submit/submit-fn code))
+  (POST "/submit-repl" [code] (whatthefn.submit/submit-repl code))
   (GET "/submit-value" [value] (whatthefn.submit/submit-value value))
 
   (route/resources "/")

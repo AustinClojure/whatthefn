@@ -36,3 +36,12 @@
       (edn-response {:result (sandbox (list 'the-fn (clojure.edn/read-string value-str)))})
       (catch Exception e
         (edn-response {:result (.getMessage e)})))))
+
+;; this will move into HTTP session
+(defonce repl (sb/sandbox))
+
+(defn submit-repl [code]
+  (try
+    (edn-response {:result (eval-code repl code)})
+    (catch Exception e
+      (edn-response {:result (.getMessage e)}))))
