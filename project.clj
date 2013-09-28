@@ -7,6 +7,7 @@
                  [hiccup "1.0.4"]
                  [ring-edn "0.1.0"]
                  [clojail "1.0.6"]
+                 [cheshire "5.2.0"]
 
                  [org.clojure/clojurescript "0.0-1877"]
                  [cljs-ajax "0.2.0"]
