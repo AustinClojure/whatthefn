@@ -7,7 +7,10 @@
                  [hiccup "1.0.4"]
                  [ring-edn "0.1.0"]
                  [clojail "1.0.6"]
-                 [org.clojure/clojurescript "0.0-1877"]]
+
+                 [org.clojure/clojurescript "0.0-1877"]
+                 [cljs-ajax "0.2.0"]
+                 [prismatic/dommy "0.1.2"]]
 
   :plugins [[lein-ring "0.8.5"]
             [lein-cljsbuild "0.3.3"]]
