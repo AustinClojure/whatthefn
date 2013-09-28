@@ -2,7 +2,8 @@
   (:use [whatthefn.functions :as fxns]
         [whatthefn.messages :as msgs]
         [whatthefn.events :as evs]
-        [whatthefn.submit :as subm]))
+        [whatthefn.submit :as subm])
+  (:require [clojure.core.async :refer :all]))
 
 ;;initialize state
 
@@ -129,7 +130,6 @@
         arg (:arg msg)
         id (:func-id msg)]
     (subm/submit-value-engine arg (partial send-fn-resolve-result room arg))
-    (send-fn-resolve-result arg (fxns/eval-function id arg) room)
     state))
 
 (defmethod proc-message :test-solution [state msg]
@@ -143,8 +143,8 @@
         room (:room msg)
         player (:player msg)
         id (:func-id msg)
-        res (fxns/test-function id f)
-        ponts-scored (get-score-value state room player rest)]
+        res (:result cb)
+        points-scored (get-score-value state room player res)]
     (send-fn-answer-result room player res points-scored)
     (player-won state room player)))
 
