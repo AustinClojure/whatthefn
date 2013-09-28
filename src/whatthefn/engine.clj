@@ -10,11 +10,8 @@
 (defn new-room [name]
   {:name name :current-func nil :seen-functions '() :player-names #{} :state :waiting-for-players :winners #{} :channel nil})
 
-(defn new-player [name]
-  {:name name :score 0})
-
 (defn get-initial-state []
-  {:rooms {"the-room" (new-room :the-room)}})
+  {:rooms {:the-room (new-room :the-room)}})
 
 ;;outgoing messages
 
@@ -162,12 +159,12 @@
     new-room))
 
 (defn start-engine []
-  (let [game-channel (evs/game-channel :my-game-id)
+  (let [game-channel (evs/game-channel :the-room)
         state-transition-function proc-message
         initial-state (get-initial-state)
-        state-with-channel (update-in initial-state [:rooms :channel] game-channel)]
+        state-with-channel (update-in initial-state [:rooms :the-room :channel] game-channel)]
     (go
-      (loop [game-state (get-initial-state)]
+      (loop [game-state state-with-channel]
         (let [next-event (<!! game-channel)]
           (prn next-event)
           ;write broadcast message here
