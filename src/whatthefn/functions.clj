@@ -22,9 +22,9 @@
     (char shifted)))
 
 (def function-bases
- #{'("a friend of lucas" :numeral 0 fib "our first function")})
+ #{'("a friend of lucas" :numeral fib "our first function")})
 
-(defn build-function [[ fname type id body desc]]
+(defn build-function [id [fname type body desc]]
   {:name fname :type type :id id :body body :description desc})
 
 (defn build-all-functions [bases]
@@ -33,7 +33,7 @@
          acc {}]
     (if (empty? bs)
       acc
-      (recur (inc x) (rest bases) (assoc acc x (build-function (first bases)))))))
+      (recur (inc x) (rest bases) (assoc acc x (build-function x (first bases)))))))
 
 (def function-map (build-all-functions function-bases))
 
