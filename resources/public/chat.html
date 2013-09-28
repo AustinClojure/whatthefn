@@ -1,0 +1,143 @@
+<html>
+<head>
+  <link rel="stylesheet"
+        type="text/css"
+        href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.css">
+</head>
+<body>
+  <div id='app'>
+    <div class='chatroom'>
+      <div class='messagesLog'></div>
+      <textarea></textarea>
+      <button>Chat!</button>
+    </div>
+  </div>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
+  <script src="js/wtfn.js"></script>
+  <script type="text/javascript">
+(function($) {
+  var Message = Backbone.Model.extend({
+  });
+
+  var Messages = Backbone.Collection.extend({
+    model: Message
+  });
+
+  var MessagesLog = Backbone.View.extend({
+    initialize: function() {
+      this.model.on('add', this.render, this);
+    },
+
+    render: function() {
+      this.$el.empty();
+      this.model.each(function(message) {
+        $('<p>').text(message.get('str')).appendTo(this.$el);
+      }, this);
+    }
+  })
+
+  var ChatRoom = Backbone.Model.extend({
+    messagesPath: function() {
+      return "/rooms/" + this.get('id') + "/messages";
+    },
+
+    lastMessageId: function() {
+      if (this.get('messages').isEmpty()) {
+        return "";
+      } else {
+        return this.get('messages').last().get('id');
+      }
+    },
+
+    sendMessage: function(message) {
+      $.post(this.messagesPath(), {message: message});
+    },
+
+    getMessages: function() {
+      if (this.get('messages').isEmpty()) {
+        this.pollForInitialMessages();
+      } else {
+        this.pollForAdditionalMessages();
+      }
+    },
+
+    poll: function(params) {
+      $.getJSON(this.messagesPath(), params, _.bind(this.addMessages, this));
+    },
+
+    pollForInitialMessages: function() {
+      this.poll({});
+    },
+
+    pollForAdditionalMessages: function() {
+      this.poll({since: this.lastMessageId()});
+    },
+
+    addMessages: function(messages) {
+      console.log(messages.length);
+      this.get('messages').add(messages);
+    }
+  });
+
+  var MessagePoller = Backbone.View.extend({
+    initialize: function() {
+      setInterval(_.bind(this.poll, this), 1000);
+    },
+
+    poll: function() {
+      this.model.getMessages();
+    },
+
+    addMessages: function(messages) {
+      this.model.add(messages);
+    }
+  });
+
+  var MessageSubmitter = Backbone.View.extend({
+    events: {
+      'click button': 'submitToChat'
+    },
+
+    submitToChat: function() {
+      var message = this.$('textarea').val();
+      this.model.sendMessage(message);
+      this.$('textarea').val('');
+    }
+  });
+
+  var App = Backbone.View.extend({
+    initialize: function() {
+      this.messages = new Messages();
+
+      new MessagesLog({
+        model: this.messages,
+        el: this.$('.messagesLog')
+      });
+
+      this.chatRoom = new ChatRoom({
+        id: 'room-a',
+        messages: this.messages
+      });
+
+      new MessagePoller({
+        model: this.chatRoom
+      });
+      new MessageSubmitter({
+        model: this.chatRoom,
+        el: this.$('.chatroom')
+      });
+    }
+  });
+
+  $(function() {
+    window.app = new App({el: '#app'});
+  });
+
+})(jQuery);
+  </script>
+</body>
+</html>
+
