@@ -75,7 +75,6 @@
       (catch Exception e
         (edn-response {:result (.getMessage e)})))))
 
-
 (defn submit-fn-engine [code our-func callback orig]
   "test whether or not a function wins"
   (try
@@ -83,9 +82,8 @@
           eval-result (eval-code sandbox code)
           the-fn (find-the-fn sandbox)]
       (if the-fn
-        {:type :function-eval-result :result (test-the-fn sandbox
-                              (functions/function-impl current-fn)
-                              (:tests our-func))}
+        {:type :function-eval-result
+         :result (test-the-fn sandbox (functions/function-impl our-func) (:tests our-func))}
         (callback {:type :function-eval-result :result false :message "the-fn not found" :orig orig})))
     (catch Exception e
       (callback {:type :function-eval-result :result false :message (.getMessage e) :orig orig}))))
@@ -95,6 +93,6 @@
   (let [sandbox (sb/sandbox)]
     (sandbox '(def the-fn (fn [x] (* x x))))
     (try
-      (callback {:type :resolve-input (sandbox (list 'the-fn (clojure.edn/read-string value-str)))})
+      (callback (sandbox (list 'the-fn (clojure.edn/read-string value-str))))
       (catch Exception e
-        (callback {:type :resolve-input (.getMessage e)})))))
+        (callback (.getMessage e))))))

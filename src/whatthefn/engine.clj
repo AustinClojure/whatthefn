@@ -126,9 +126,9 @@
 
 (defmethod proc-message :resolve-input [state msg]
   (let [room (:room msg)
-        player (:player msg)
         arg (:arg msg)
         id (:func-id msg)]
+    (subm/submit-value-engine arg (partial send-fn-resolve-result room arg))
     (send-fn-resolve-result arg (fxns/eval-function id arg) room)
     state))
 
