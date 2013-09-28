@@ -29,11 +29,11 @@
 
       <!-- ROW UNDER EDITOR ================================================================================ -->
       <div class="row-fluid">
-        <div class="span1">
+        <div class="row_under_editor span1">
           <button  id="submitbutton" type="button" class="btn btn-small btn-primary">Submit</button>
         </div><!--/.span1 **-->
         
-        <div class="span1" hidden>
+        <div class="row_under_editor span1">
           <div class="btn-group">
             <button class="btn btn-small">Theme</button>
             <button class="btn btn-small dropdown-toggle" data-toggle="dropdown">
@@ -73,6 +73,10 @@
             </ul>
           </div>
         </div><!-- /.span1 -->
+
+        <div class="row_under_editor span2 offset5">
+          <span id="clock" class="label pull-right btn-info">Time Remaining: 04:32</span>
+        </div><!--/.clock-->
 
         
 
@@ -167,6 +171,27 @@
         setTimeout(function(){ window.scrollTo(0,0) }, 10)
         
         whatthefn.core.init()
+
+        function myTimer() {
+
+        var d=new Date(); 
+        var t=d.toLocaleTimeString(); 
+        var s=d.getSeconds();
+        $('clock').innerHTML="Time Remaining: " + t;
+
+
+        if (s > 40) {
+        $('clock').className="label pull-right btn-info";
+        }
+        else if (s > 20) {
+        $('clock').className="label pull-right btn-warning";
+        }
+        else {
+        $('clock').className="label pull-right btn-danger";
+        }
+        } //myTimer
+
+        var myVar=setInterval(function(){myTimer()},1000);
         
     </script>
 
