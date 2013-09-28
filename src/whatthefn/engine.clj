@@ -12,13 +12,17 @@
 
 ;;outgoing messages
 
-(defn send-join-confirm [room-id player-name])
+(defn send-join-confirm [room-id player-name]
+  (whatthefn.messages/new-message! room-id {:type :join-confirm :room room-id :player player-name}))
 
-(defn send-join-reject [room-id player-name])
+(defn send-join-reject [room-id player-name]
+  (whatthefn.messages/new-message! room-id {:type :join-reject :room room-id :player player-name}))
 
-(defn send-fn-resolve-result [input output room-id])
+(defn send-fn-resolve-result [input output room-id]
+  (whatthefn.messages/new-message! room-id {:type :resolve-input :input input :output output}))
 
-(defn send-fn-answer-result [room-id player-name result])
+(defn send-fn-answer-result [room-id player-name result]
+  (whatthefn.messages/new-message! room-id {:type :grade-answer :player player-name :room room-id :result result}))
 
 (defmulti proc-message :type)
 
@@ -35,3 +39,5 @@
         player (:player msg)
         id (:func-id msg)]
     (send-fn-answer-result room player (whatthefn.functions/test-function id f))))
+
+(defn start-engine [])
