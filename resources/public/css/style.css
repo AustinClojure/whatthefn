@@ -50,4 +50,7 @@
 
 #repl { 
         width: 100%;
+        background-color: grey;
+        color: white;
       }
+
