@@ -1,19 +1,19 @@
 (ns whatthefn.engine
   (:use [whatthefn.functions :as fxns]
         [whatthefn.messages :as msgs]
-        [whatthefn.events :as evs]))
+        [whatthefn.events :as evs]
+        [whatthefn.submit :as subm]))
 
 ;;initialize state
 
 (defn new-room [name]
-  {:name name :current-func nil :seen-functions '() :player-names #{} :state :waiting-for-players :winners #{}})
+  {:name name :current-func nil :seen-functions '() :player-names #{} :state :waiting-for-players :winners #{} :channel nil})
 
 (defn new-player [name]
   {:name name :score 0})
 
 (defn get-initial-state []
-  {:rooms {"the-room" (new-room :the-room)}
-   :channel nil})
+  {:rooms {"the-room" (new-room :the-room)}})
 
 ;;outgoing messages
 
@@ -134,6 +134,12 @@
 
 (defmethod proc-message :test-solution [state msg]
   (let [f (:function msg)
+        room (:room msg)]
+    (subm/submit-fn-engine f (get-current-function state room) (partial send-message-self (:channel state)) msg)))
+
+(defmethod proc-message :function-eval-result [state cb]
+  (let [msg (:orig cb)
+        f (:function msg)
         room (:room msg)
         player (:player msg)
         id (:func-id msg)
@@ -141,8 +147,6 @@
         ponts-scored (get-score-value state room player rest)]
     (send-fn-answer-result room player res points-scored)
     (player-won state room player)))
-
-(defmethod proc-message :function-eval-result)
 
 (defmethod proc-message :player-join-attempt [state msg]
   (let [room-id (:room msg)
@@ -159,7 +163,9 @@
 
 (defn start-engine []
   (let [game-channel (evs/game-channel :my-game-id)
-        state-transition-function proc-message]
+        state-transition-function proc-message
+        initial-state (get-initial-state)
+        state-with-channel (update-in initial-state [:rooms :channel] game-channel)]
     (go
       (loop [game-state (get-initial-state)]
         (let [next-event (<!! game-channel)]

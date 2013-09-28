@@ -76,7 +76,7 @@
         (edn-response {:result (.getMessage e)})))))
 
 
-(defn submit-fn-engine [code our-func callback]
+(defn submit-fn-engine [code our-func callback orig]
   "test whether or not a function wins"
   (try
     (let [sandbox (sb/sandbox)
@@ -86,9 +86,9 @@
         {:type :function-eval-result :result (test-the-fn sandbox
                               (functions/function-impl current-fn)
                               (:tests our-func))}
-        (callback {:type :function-eval-result :result false :message "the-fn not found"})))
+        (callback {:type :function-eval-result :result false :message "the-fn not found" :orig orig})))
     (catch Exception e
-      (callback {:type :function-eval-result :result false :message (.getMessage e)}))))
+      (callback {:type :function-eval-result :result false :message (.getMessage e) :orig orig}))))
 
 (defn submit-value-engine [value-str callback]
   "get the output for a single input"
