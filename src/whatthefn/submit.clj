@@ -14,9 +14,8 @@
     (cons next-val (edn-seq reader))))
 
 
-(defn eval-code [code]
-  (let [sandbox (sb/sandbox)
-        forms (edn-seq (str-reader code))
+(defn eval-code [sandbox code]
+  (let [forms (edn-seq (str-reader code))
         results (map sandbox forms)
         result-text (clojure.string/join "\n" (map pr-str results))]
     result-text))
@@ -24,6 +23,16 @@
 
 (defn submit-fn [code]
   (try
-    (edn-response {:result (eval-code code)})
+    (edn-response {:result (eval-code (sb/sandbox) code)})
     (catch Exception e
       (edn-response {:result (.getMessage e)}))))
+
+
+(defn submit-value [value-str]
+  (let [sandbox (sb/sandbox)]
+    (sandbox '(defn the-fn [n] (+ 1 (* n n))))
+
+    (try
+      (edn-response {:result (sandbox (list 'the-fn (clojure.edn/read-string value-str)))})
+      (catch Exception e
+        (edn-response {:result (.getMessage e)})))))

@@ -32,9 +32,9 @@
 
 (defroutes app-routes
   (GET "/" [] (response/redirect "/app.html"))
-  (GET "/test" [] (test-page))
-  (GET "/edn-test" [] (test-edn))
+
   (POST "/submit-fn" [code] (whatthefn.submit/submit-fn code))
+  (GET "/submit-value" [value] (whatthefn.submit/submit-value value))
 
   (route/resources "/")
   (route/not-found "Not Found"))
