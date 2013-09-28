@@ -16,6 +16,7 @@
   <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
+  <script src="js/gameapi.js"></script>
   <script src="js/messages.js"></script>
   <script type="text/javascript">
 (function($) {
@@ -34,7 +35,7 @@
     render: function() {
       this.$el.empty();
       this.model.each(function(message) {
-        $('<p>').text(message.get('str')).appendTo(this.$el);
+        $('<p>').text(message.getChatString()).appendTo(this.$el);
       }, this);
     }
   })
@@ -53,7 +54,10 @@
     },
 
     sendMessage: function(message) {
-      $.post(this.messagesPath(), {message: message});
+      var api = new GameApi({
+        roomId: this.get('id')
+      });
+      api.chat(message);
     },
 
     getMessages: function() {
@@ -78,20 +82,6 @@
 
     addMessages: function(messages) {
       this.get('messages').add(messages);
-    }
-  });
-
-  var MessagePoller = Backbone.View.extend({
-    initialize: function() {
-      setInterval(_.bind(this.poll, this), 1000);
-    },
-
-    poll: function() {
-      this.model.getMessages();
-    },
-
-    addMessages: function(messages) {
-      this.model.add(messages);
     }
   });
 
@@ -121,9 +111,6 @@
         messages: this.messages
       });
 
-      new MessagePoller({
-        model: this.chatRoom
-      });
       new MessageSubmitter({
         model: this.chatRoom,
         el: this.$('.chatroom')
@@ -131,9 +118,10 @@
 
       new MessageQueue({
         roomId: 'room-a',
-        handlerFunction: function(message) {
+        handlerFunction: _.bind(function(message) {
+          this.messages.add(message);
           console.log(message.getChatString());
-        }
+        }, this)
       }).start();
     }
   });
@@ -146,4 +134,3 @@
   </script>
 </body>
 </html>
-
