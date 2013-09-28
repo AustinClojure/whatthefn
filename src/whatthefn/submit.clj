@@ -37,11 +37,13 @@
       (catch Exception e
         (edn-response {:result (.getMessage e)})))))
 
-;; this will move into HTTP session
-(defonce repl (sb/sandbox))
 
-(defn submit-repl [code]
-  (try
-    (edn-response {:result (eval-code repl code)})
-    (catch Exception e
-      (edn-response {:result (.getMessage e)}))))
+(defn submit-repl [req code]
+  (let [session (:session req)
+        repl (or (:repl session) (sb/sandbox))
+        new-sesion (assoc session :repl repl)]
+    (try
+      (-> (edn-response {:result (eval-code repl code)})
+          (assoc :session new-sesion))
+      (catch Exception e
+        (edn-response {:result (.getMessage e)})))))

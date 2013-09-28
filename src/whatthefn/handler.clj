@@ -25,16 +25,18 @@
   (let [safe-inc (fnil inc 0)
         new-val (safe-inc (get-in req [:session :counter]))]
     {:body (str new-val)
-     :session {:counter new-val}}))
-
+     :session (assoc (:session req)
+                :counter new-val)}))
 
 (defroutes app-routes
   (GET "/" [] (response/redirect "/app.html"))
 
   (POST "/submit-fn" [code]
         (whatthefn.submit/submit-fn code))
-  (POST "/submit-repl" [code]
-        (whatthefn.submit/submit-repl code))
+  (POST "/submit-repl" [code :as req]
+        (whatthefn.submit/submit-repl req code))
+  (GET "/sr" [code :as req]
+       (whatthefn.submit/submit-repl req code))
   (GET "/submit-value" [value]
        (whatthefn.submit/submit-value value))
 
