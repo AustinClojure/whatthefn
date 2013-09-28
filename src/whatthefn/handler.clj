@@ -5,6 +5,7 @@
             [hiccup.page :as page]
             [hiccup.element :as elem]
             [ring.middleware.edn :as edn-params]
+            [ring.middleware.session.memory :as mem]
             [ring.util.response :as response]
             [whatthefn.messages :as messages]
             [whatthefn.submit]))
@@ -18,6 +19,13 @@
    [:head [:title title]]
    [:body body]))
 
+
+(defn counter [req]
+  (println (:session req))
+  (let [safe-inc (fnil inc 0)
+        new-val (safe-inc (get-in req [:session :counter]))]
+    {:body (str new-val)
+     :session {:counter new-val}}))
 
 
 (defroutes app-routes
@@ -35,6 +43,8 @@
   (POST "/rooms/:room-id/messages" {{room-id :room-id message :message} :params}
         (edn-response (messages/new-message! room-id {:str message})))
 
+  (GET "/counter" [] counter)
+
   (route/resources "/")
   (route/not-found "Not Found"))
 
@@ -42,5 +52,6 @@
 
 (def app
   (-> app-routes
-      edn-params/wrap-edn-params
-      handler/site))
+      (edn-params/wrap-edn-params)
+      (handler/site
+       {:store (mem/memory-store)})))
