@@ -42,13 +42,13 @@
     (char shifted)))
 
 (def function-bases
-  #{'("a friend of lucas" :numeral fib "our first function")
-    '("a prime problem" :numeral prime-factors "second function")
-    '("what's the opposite of gestalt?" :numeral sum-prime-factors "third function")
-    '("a matter of fact" :numeral factorial "4th function")})
+  #{'("a friend of lucas" :numeral fib "our first function" #{2 5 10})
+    '("a prime problem" :numeral prime-factors "second function" #{7 9 24 12 30})
+    '("what's the opposite of gestalt?" :numeral sum-prime-factors "third function" #{7 9 8 24 12 30})
+    '("a matter of fact" :numeral factorial "4th function" {2 5 3})})
 
-(defn build-function [id [fname type body desc]]
-  {:name fname :type type :id id :body body :description desc})
+(defn build-function [id [fname type body desc tests]]
+  {:name fname :type type :id id :body body :description desc :tests tests})
 
 (defn build-all-functions [bases]
   (loop [x 0
@@ -68,4 +68,13 @@
   (function-map id))
 
 (defn eval-function [id arg]
+  "returns the result of function <id> evaluated with argument <arg>"
   ((get-function id) arg))
+
+(defn test-function [f id]
+  "returns true if the user function, <f> provides the same output as the game's function referred to by<id>, false otherwise"
+  (let [against (get-function id)
+        tests (:tests against)
+        func (:body against)]
+    ((every? true? (for [test tests]
+                     (= (f test) (against test)))))))
