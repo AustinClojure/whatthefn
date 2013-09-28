@@ -5,5 +5,5 @@
 pom.xml
 *.jar
 *.class
-.lein-*
 wtfn.js
+/bin
