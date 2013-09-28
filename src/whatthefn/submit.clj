@@ -30,7 +30,7 @@
 
 (defn submit-value [value-str]
   (let [sandbox (sb/sandbox)]
-    (sandbox '(defn the-fn [n] (+ 1 (* n n))))
+    (sandbox '(def the-fn whatthefn.functions/fib))
 
     (try
       (edn-response {:result (sandbox (list 'the-fn (clojure.edn/read-string value-str)))})
