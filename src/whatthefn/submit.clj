@@ -6,6 +6,74 @@
   {:body (pr-str data)
    :headers {"Content-Type" "application/edn;charset=UTF-8"}})
 
+(defn str-reader [text]
+  (java.io.PushbackReader. (java.io.StringReader. text)))
+
+(defn edn-seq [reader]
+  (when-let [next-val (clojure.edn/read {:eof nil} reader)]
+    (cons next-val (edn-seq reader))))
+
+
+(defn eval-code [sandbox code]
+  (let [forms (edn-seq (str-reader code))
+        results (map sandbox forms)
+        result-text (clojure.string/join "\n" (map pr-str results))]
+    result-text))
+
+
+
+(def current-fn (atom {:fn (fn [x] (* x x))
+                       :tests [1 2 5 10 15 -4 0]}))
+
+(defn find-the-fn [sandbox]
+  (try
+    (sandbox 'the-fn)
+    (catch Exception e
+      nil)))
+
+(defn test-the-fn [sandbox]
+  (let [[real-fn test-cases] ((juxt :fn :tests) @current-fn)
+        test-val (fn [val]
+                   (try
+                     (= (real-fn val)
+                        (sandbox (list 'the-fn val)))
+                     (catch Exception e
+                       (println "eval error val " val)
+                       false)))]
+    (every? test-val test-cases)))
+
 (defn submit-fn [code]
-  (let [result  ((sb/sandbox) (clojure.edn/read-string code))]
-    (edn-response {:result result})))
+  (try
+    (let [sandbox (sb/sandbox)
+          eval-result (eval-code sandbox code)
+          the-fn (find-the-fn sandbox)]
+
+      (println "XXX" code)
+      (if the-fn
+        (edn-response {:result (test-the-fn sandbox)})
+        (edn-response {:result "the-fn not found"})))
+
+    (catch Exception e
+      (edn-response {:result (.getMessage e)}))))
+
+
+(defn submit-value [value-str]
+  (let [sandbox (sb/sandbox)]
+    (sandbox '(def the-fn (fn [x] (* x x))))
+
+    (try
+      (edn-response {:result (sandbox (list 'the-fn (clojure.edn/read-string value-str)))})
+      (catch Exception e
+        (edn-response {:result (.getMessage e)})))))
+
+
+(defn submit-repl [req code]
+  (let [session (:session req)
+        repl (or (:repl session) (sb/sandbox))
+        new-sesion (assoc session :repl repl)]
+    (try
+      (-> (edn-response {:result (eval-code repl code)})
+          (assoc :session new-sesion))
+      (catch Exception e
+        (edn-response {:result (.getMessage e)})))))
+

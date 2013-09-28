@@ -5,12 +5,13 @@
             [hiccup.page :as page]
             [hiccup.element :as elem]
             [ring.middleware.edn :as edn-params]
+            [ring.middleware.session.memory :as mem]
             [ring.util.response :as response]
+            [whatthefn.messages :as messages]
             [whatthefn.submit]))
 
-
-(defn test-edn []
-  {:body (pr-str {:this :is :a :test})
+(defn edn-response [data]
+  {:body (pr-str data)
    :headers {"Content-Type" "application/edn;charset=UTF-8"}})
 
 (defn layout [title & body]
@@ -18,28 +19,41 @@
    [:head [:title title]]
    [:body body]))
 
-(defn test-page []
-  (layout "What The FN"
-          [:h1 "What the FN test page"]
-          [:p "This is a quick example"]
-          [:textarea#fnin {:type :textarea}]
-          [:br]
-          [:input#fnout {:type :text}]
-          [:button#submittest "Test"]
-          (page/include-js "/js/wtfn.js")
-          (elem/javascript-tag "whatthefn.core.init();")))
 
+(defn counter [req]
+  (println (:session req))
+  (let [safe-inc (fnil inc 0)
+        new-val (safe-inc (get-in req [:session :counter]))]
+    {:body (str new-val)
+     :session (assoc (:session req)
+                :counter new-val)}))
 
 (defroutes app-routes
   (GET "/" [] (response/redirect "/app.html"))
-  (GET "/test" [] (test-page))
-  (GET "/edn-test" [] (test-edn))
-  (POST "/submit-fn" [code] (whatthefn.submit/submit-fn code))
+
+  (POST "/submit-fn" [code]
+        (whatthefn.submit/submit-fn code))
+  (POST "/submit-repl" [code :as req]
+        (whatthefn.submit/submit-repl req code))
+  (GET "/sr" [code :as req]
+       (whatthefn.submit/submit-repl req code))
+  (GET "/submit-value" [value]
+       (whatthefn.submit/submit-value value))
+
+  (GET "/rooms/:room-id/messages" {{room-id :room-id since :since} :params}
+       (edn-response (messages/messages-since room-id since)))
+  (POST "/rooms/:room-id/messages" {{room-id :room-id message :message} :params}
+        (edn-response (messages/new-message! room-id {:str message})))
+
+  (GET "/counter" [] counter)
 
   (route/resources "/")
   (route/not-found "Not Found"))
 
+
+
 (def app
   (-> app-routes
-      edn-params/wrap-edn-params
-      handler/site))
+      (edn-params/wrap-edn-params)
+      (handler/site
+       {:store (mem/memory-store)})))
