@@ -1,4 +1,8 @@
-(ns whatthefn.engine)
+(ns whatthefn.engine
+  :use [whatthefn.functions :as fxns
+        whatthefn.messages :as msgs])
+
+;;initialize state
 
 (defn new-room [name]
   {:name name :current-func nil :seen-functions '() :player-names '() :state :waiting-for-players})
@@ -13,18 +17,18 @@
 ;;outgoing messages
 
 (defn send-join-confirm [room-id player-name]
-  (whatthefn.messages/new-message! room-id {:type :join-confirm :room room-id :player player-name}))
+  (msgs/new-message! room-id {:type :join-confirm :room room-id :player player-name}))
 
 (defn send-join-reject [room-id player-name]
-  (whatthefn.messages/new-message! room-id {:type :join-reject :room room-id :player player-name}))
+  (msgs/new-message! room-id {:type :join-reject :room room-id :player player-name}))
 
 (defn send-fn-resolve-result [input output room-id]
-  (whatthefn.messages/new-message! room-id {:type :resolve-input :input input :output output}))
+  (msgs/new-message! room-id {:type :resolve-input :input input :output output}))
 
 (defn send-fn-answer-result [room-id player-name result]
-  (whatthefn.messages/new-message! room-id {:type :grade-answer :player player-name :room room-id :result result}))
+  (msgs/new-message! room-id {:type :grade-answer :player player-name :room room-id :result result}))
 
-;;state updates/incoming messages
+;;state updates(engine logic)
 
 (defn player-join-attempt [room-id player-name state]
   (let [rooms (:rooms state)
@@ -32,6 +36,7 @@
 
 (defn add-player-room [room-id player-name state])
 
+;;message processing
 
 (defmulti proc-message :type)
 
@@ -48,7 +53,7 @@
         room (:room msg)
         player (:player msg)
         id (:func-id msg)
-        res (whatthefn.functions/test-function id f)]
+        res (fxns/test-function id f)]
     (send-fn-answer-result room player res)
     (if res
 
