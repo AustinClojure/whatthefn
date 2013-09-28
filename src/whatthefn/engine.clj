@@ -21,9 +21,17 @@
 (defn send-fn-answer-result [room-id player-name result])
 
 (defmulti proc-message :type)
-(defmethod proc-message :resolve-input [msg])
+
+(defmethod proc-message :resolve-input [msg]
+  (let [room (:room msg)
+        player (:player msg)
+        arg (:arg msg)
+        id (:func-id msg)]
+    (send-fn-resolve-result arg (whatthefn.functions/eval-function id arg) room)))
+
 (defmethod proc-message :test-answer [msg]
   (let [f (:function msg)
         room (:room msg)
-        player (:player msg)]
-    (send-fn-answer-result room player whatthefn.functions/)))
+        player (:player msg)
+        id (:func-id msg)]
+    (send-fn-answer-result room player (whatthefn.functions/test-function id f))))
