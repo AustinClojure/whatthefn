@@ -1,4 +1,6 @@
-(ns whatthefn.messages)
+(ns whatthefn.messages
+  (:require [clj-time.core :as time]
+            [clj-time.coerce :as coerce]))
 
 (def room-messages
   (ref {}))
@@ -7,9 +9,10 @@
   [room-id]
   (alter room-messages assoc room-id (ref [])))
 
-(defn annotate-message-with-id
+(defn annotate-message-with-metadata
   [message]
-  (assoc message :id (str (gensym ""))))
+  (assoc message :id (str (gensym ""))
+                 :server-time-unix-millis (coerce/to-long (time/now))))
 
 (defn new-message!
   "Creates a room with the given id if it doesn't exist. Then associates an :id
@@ -19,7 +22,7 @@
     (when-not (@room-messages room-id)
       (new-room! room-id)))
   (dosync
-    (let [message-with-id (annotate-message-with-id message)]
+    (let [message-with-id (annotate-message-with-metadata message)]
       (alter (@room-messages room-id) conj message-with-id)
       {:id (:id message-with-id)})))
 
