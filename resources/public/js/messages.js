@@ -7,7 +7,7 @@
 
   var ChatMessage = Backbone.Model.extend({
     getChatString: function() {
-      return 'Chat Message!';
+      return this.get('player') + ': ' + this.get('string');
     }
   });
 

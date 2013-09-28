@@ -35,7 +35,7 @@
     render: function() {
       this.$el.empty();
       this.model.each(function(message) {
-        $('<p>').text(message.get('str')).appendTo(this.$el);
+        $('<p>').text(message.getChatString()).appendTo(this.$el);
       }, this);
     }
   })
@@ -85,20 +85,6 @@
     }
   });
 
-  var MessagePoller = Backbone.View.extend({
-    initialize: function() {
-      setInterval(_.bind(this.poll, this), 1000);
-    },
-
-    poll: function() {
-      this.model.getMessages();
-    },
-
-    addMessages: function(messages) {
-      this.model.add(messages);
-    }
-  });
-
   var MessageSubmitter = Backbone.View.extend({
     events: {
       'click button': 'submitToChat'
@@ -125,9 +111,6 @@
         messages: this.messages
       });
 
-      new MessagePoller({
-        model: this.chatRoom
-      });
       new MessageSubmitter({
         model: this.chatRoom,
         el: this.$('.chatroom')
@@ -135,9 +118,10 @@
 
       new MessageQueue({
         roomId: 'room-a',
-        handlerFunction: function(message) {
+        handlerFunction: _.bind(function(message) {
+          this.messages.add(message);
           console.log(message.getChatString());
-        }
+        }, this)
       }).start();
     }
   });
@@ -150,4 +134,3 @@
   </script>
 </body>
 </html>
-
