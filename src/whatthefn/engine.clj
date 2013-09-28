@@ -11,7 +11,7 @@
   {:name name :score 0})
 
 (defn get-initial-state []
-  {:rooms {:the-room (new-room :the-room)
+  {:rooms {"the-room" (new-room :the-room)
            :players #{}}})
 
 ;;outgoing messages
@@ -35,6 +35,11 @@
   (msgs/new-message! room-id {:type :player-scored :room room-id :player player-name :points num-points}))
 
 ;;state util
+
+(defn get-current-function [state room-id]
+  (let [rooms (:rooms state)
+        room (rooms room-id)
+        (:current-func room)]))
 
 (defn num-players [state room-id]
   "return the number of players in the room"
@@ -81,7 +86,7 @@
 
 (defn player-won [state player-id]
   "the player correctly answered...if all players have answered, end round"
-  ())
+  (if (player-winner? )))
 
 (defn refresh-function [state room-id]
   (update-in state [:rooms room-id :current-func] fxns/get-next-function))
@@ -128,4 +133,4 @@
 (defn get-lazy-seq-http [])
 
 (defn start-engine []
-  (reduce proc-message state (get-lazy-seq-http)))
+  (reduce proc-message (get-initial-state) (get-lazy-seq-http)))
