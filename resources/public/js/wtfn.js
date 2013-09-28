@@ -31851,22 +31851,36 @@ dommy.core.fire_BANG_ = function() {
 }();
 goog.provide("whatthefn.core");
 goog.require("cljs.core");
+goog.require("clojure.string");
 goog.require("dommy.core");
 goog.require("ajax.core");
-whatthefn.core.log_response = function log_response(resp) {
-  return console.log("RESP", cljs.core.pr_str.call(null, resp))
-};
 whatthefn.core.out_field = function out_field(resp) {
-  console.log("RESP!", cljs.core.pr_str.call(null, (new cljs.core.Keyword(null, "result", "result", 4374444943)).call(null, resp)));
-  return dommy.core.append_BANG_.call(null, document.getElementById("statusbox"), [cljs.core.str("Result: "), cljs.core.str(cljs.core.pr_str.call(null, (new cljs.core.Keyword(null, "result", "result", 4374444943)).call(null, resp)))].join(""))
+  console.log("out-field: ", cljs.core.pr_str.call(null, (new cljs.core.Keyword(null, "result", "result", 4374444943)).call(null, resp)));
+  return dommy.core.append_BANG_.call(null, document.getElementById("statusbox"), [cljs.core.str("\nResult: "), cljs.core.str(cljs.core.pr_str.call(null, (new cljs.core.Keyword(null, "result", "result", 4374444943)).call(null, resp)))].join(""))
+};
+whatthefn.core.out_repl = function out_repl(resp) {
+  console.log("out-repl: ", cljs.core.pr_str.call(null, (new cljs.core.Keyword(null, "result", "result", 4374444943)).call(null, resp)));
+  var old_val_6228 = dommy.core.value.call(null, document.getElementById("repl"));
+  return dommy.core.set_value_BANG_.call(null, document.getElementById("repl"), [cljs.core.str(whatthefn.core.old_val), cljs.core.str(cljs.core.pr_str.call(null, (new cljs.core.Keyword(null, "result", "result", 4374444943)).call(null, resp)))].join(""), "\n")
 };
 whatthefn.core.send_fn = function send_fn(fn_text) {
   return ajax.core.POST.call(null, "/submit-fn", cljs.core.PersistentArrayMap.fromArray([new cljs.core.Keyword(null, "params", "params", 4313443576), cljs.core.PersistentArrayMap.fromArray([new cljs.core.Keyword(null, "code", "code", 1016963423), fn_text], true), new cljs.core.Keyword(null, "format", "format", 4040092521), new cljs.core.Keyword(null, "edn", "edn", 1014004513), new cljs.core.Keyword(null, "handler", "handler", 1706707644), whatthefn.core.out_field], true))
 };
+whatthefn.core.send_repl = function send_repl(fn_text) {
+  return ajax.core.POST.call(null, "/submit-repl", cljs.core.PersistentArrayMap.fromArray([new cljs.core.Keyword(null, "params", "params", 4313443576), cljs.core.PersistentArrayMap.fromArray([new cljs.core.Keyword(null, "code", "code", 1016963423), fn_text], true), new cljs.core.Keyword(null, "format", "format", 4040092521), new cljs.core.Keyword(null, "edn", "edn", 1014004513), new cljs.core.Keyword(null, "handler", "handler", 1706707644), whatthefn.core.out_repl], true))
+};
 whatthefn.core.submit_clicked = function submit_clicked() {
   return whatthefn.core.send_fn.call(null, editor.getValue())
 };
+whatthefn.core.key_pressed = function key_pressed(e) {
+  if(cljs.core._EQ_.call(null, 13, e.which)) {
+    return whatthefn.core.send_repl.call(null, cljs.core.last.call(null, clojure.string.split.call(null, document.getElementById("repl").value, /\n/)))
+  }else {
+    return null
+  }
+};
 whatthefn.core.init = function init() {
   console.log("starting");
-  return dommy.core.listen_BANG_.call(null, document.getElementById("submitbutton"), new cljs.core.Keyword(null, "click", "click", 1108654330), whatthefn.core.submit_clicked)
+  dommy.core.listen_BANG_.call(null, document.getElementById("submitbutton"), new cljs.core.Keyword(null, "click", "click", 1108654330), whatthefn.core.submit_clicked);
+  return dommy.core.listen_BANG_.call(null, document.getElementById("repl"), new cljs.core.Keyword(null, "keypress", "keypress", 1530666166), whatthefn.core.key_pressed)
 };
