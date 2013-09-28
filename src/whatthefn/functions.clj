@@ -66,3 +66,6 @@
 
 (defn get-function [id]
   (function-map id))
+
+(defn eval-function [id arg]
+  ((get-function id) arg))
