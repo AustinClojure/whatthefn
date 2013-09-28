@@ -5,7 +5,7 @@
 ;;initialize state
 
 (defn new-room [name]
-  {:name name :current-func nil :seen-functions '() :player-names '() :state :waiting-for-players})
+  {:name name :current-func nil :seen-functions '() :player-names #{} :state :waiting-for-players :winners #{}})
 
 (defn new-player [name]
   {:name name :score 0})
@@ -31,15 +31,46 @@
 (defn send-finish-round [room-id]
   (msgs/new-message! room-id {:type :finish-round :room room-id}))
 
+(defn send-round-begin [room-id round-data]
+  (msgs/new-message! room-id {:type :round-begin :room room-id :round-data round-data}))
+
+(defn send-player-scored [room-id player-id num-points])
+
+;;state util
+(defn num-players [state room-id]
+  (let [rooms (:rooms state)
+        room (rooms room-id)]
+    (count (:players room))))
+
+(defn player-in-room? [state room-id player]
+  (let [rooms (:rooms state)
+        room (rooms room-id)]
+    (contains? (:players room) player)))
+
+(defn check-room-full [state room-id]
+  (= 4 (num-players state room-id)))
+
+(defn player-winner? [state room-id player-id]
+  (let [rooms (:rooms state)
+        room (rooms room-id)
+        winners (:winners room)]
+    (contains? winners player-id)))
+
 ;;state updates(engine logic)
 
-(defn add-player-room [room-id player-name state])
+(defn add-player-room [state room-id player-name]
+  (let [rooms (:rooms state)
+        room (rooms room-id)
+        players (:players room)]
+    (if (and (not (player-in-room? state room-id player-name)) (< (count players) 4))
+      (update-in state [:rooms room-id :players] #(conj % player-name))
+      state)))
 
 (defn player-join-attempt [room-id player-name state]
   (let [rooms (:rooms state)
-        room (rooms roomid)]))
+        room (rooms room-id)]))
 
-(defn player-won []
+(defn player-won [state player-id]
   "the player correctly answered...if all players have answered, end round")
 
 ;;message processing
