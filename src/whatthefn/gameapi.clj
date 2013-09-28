@@ -23,9 +23,23 @@
                            :player player
                            :function function}))
 
+(defn player-join-attempt
+  [{:keys [room-id player]}]
+  (write-to-game-channel! room-id
+                          {:type :player-join-attempt
+                           :player player}))
+
+(defn player-left
+  [{:keys [room-id player]}]
+  (write-to-game-channel! room-id
+                          {:type :player-left
+                           :player player}))
+
 (defn handler
   [req]
   (case (:type (:params req))
     "chat" (chat (:params req))
     "resolve-input" (resolve-input (:params req))
-    "test-solution" (test-solution (:params req))))
+    "test-solution" (test-solution (:params req))
+    "player-join-attempt" (player-join-attempt (:params req))
+    "player-left" (player-left (:params req))))
