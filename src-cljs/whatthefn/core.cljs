@@ -13,7 +13,7 @@
 (defn out-repl [resp]
   (.log js/console "out-repl: " (pr-str (:result resp)))
   (let [old-val (dommy/value (sel1 :#repl))
-        new-val  (str old-val (pr-str (:result resp)) "\n")]
+        new-val  (str old-val (:result resp) "\n")]
     (dommy/set-value! (sel1 :#repl) new-val)))
 
 
