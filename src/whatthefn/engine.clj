@@ -1,6 +1,7 @@
 (ns whatthefn.engine
-  :use [whatthefn.functions :as fxns
-        whatthefn.messages :as msgs])
+  :use [whatthefn.functions :as fxns]
+       [whatthefn.messages :as msgs]
+       [whatthefn.events :as evs])
 
 ;;initialize state
 
@@ -150,6 +151,16 @@
     new-room))
 
 (defn get-lazy-seq-http [])
+
+(defn start-engine []
+  (let [game-channel (evs/game-channel :my-game-id)
+        state-transition-function proc-message]
+    (go
+      (loop [game-state (get-initial-state)]
+        (let [next-event (<!! game-channel)]
+          (prn next-event)
+          ;write broadcast message here
+          (recur (state-transition-function game-state next-event)))))))
 
 (defn start-engine []
   (reduce proc-message (get-initial-state) (get-lazy-seq-http)))
