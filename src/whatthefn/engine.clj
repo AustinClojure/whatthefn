@@ -23,7 +23,7 @@
   (msgs/new-message! room-id {:type :resolve-input :input input :output output}))
 
 (defn send-fn-answer-result [room-id player-name result]
-  (msgs/new-message! room-id {:type :grade-answer :player player-name :room room-id :result result}))
+  (msgs/new-message! room-id {:type :answer-solution :player player-name :room room-id :result result :points-awarded}))
 
 (defn send-round-ends [room-id]
   (msgs/new-message! room-id {:type :round-ends :room room-id}))
@@ -53,10 +53,6 @@
         room (rooms room-id)]
     (count (:winners room))))
 
-(defn get-score-value [state room-id]
-  "returns how many points it is worth to score now"
-  (+ 2 (- (num-players) (num-winners))))
-
 (defn player-in-room? [state room-id player]
   "returns true if a player is in the given room"
   (let [rooms (:rooms state)
@@ -74,7 +70,24 @@
         winners (:winners room)]
     (contains? winners player-id)))
 
+(defn get-score-value [state room-id player result]
+  "returns how many points it is worth to score now"
+  (if (and result (not (player-winner? state room-id player)))
+    (+ 2 (- (num-players state room-id) (num-winners state room-id)))
+    0))
+
+(defn everyone-won? [state room-id]
+  (let [winners (get-in state [:rooms room-id winners])
+        players (get-in state [:rooms room-id players])
+        (empty? (clojure.set/difference players winners))]))
+
 ;;state updates(engine logic)
+
+(defn remove-player-room [state room-id player-name]
+  (let [rooms (:rooms state)
+        room (rooms room-id)
+        players (:players room)
+        (update-in state [:rooms room-id :players] (disj (get-in state [:rooms room-id :players]) player-name))]))
 
 (defn add-player-room [state room-id player-name]
   (let [rooms (:rooms state)
@@ -83,10 +96,6 @@
     (if (and (not (player-in-room? state room-id player-name)) (< (count players) 4))
       (update-in state [:rooms room-id :players] #(conj % player-name))
       state)))
-
-(defn player-won [state player-id]
-  "the player correctly answered...if all players have answered, end round"
-  (if (player-winner? )))
 
 (defn refresh-function [state room-id]
   (update-in state [:rooms room-id :current-func] fxns/get-next-function))
@@ -98,6 +107,12 @@
   (let [winners-cleared (clear-winners state room-id)
         function-added (refresh-function winners-cleared room-id)]
     function-added))
+
+(defn player-won [state room-id player]
+  (let [new-room (update-in state [:rooms room-id :winners] conj player)]
+    (if (everyone-won? new-roow room-id)
+      (send-round-ends room-id)
+      new-room)))
 
 ;;message processing
 
@@ -111,24 +126,28 @@
     (send-fn-resolve-result arg (fxns/eval-function id arg) room)
     state))
 
-(defmethod proc-message :test-answer [state msg]
+(defmethod proc-message :test-solution [state msg]
   (let [f (:function msg)
         room (:room msg)
         player (:player msg)
         id (:func-id msg)
-        res (fxns/test-function id f)]
-    (send-fn-answer-result room player res)
-    (if res
-      (player-won state player)
-      state)))
+        res (fxns/test-function id f)
+        ponts-scored (get-score-value state room player rest)]
+    (send-fn-answer-result room player res points-scored)
+    (player-won state room player)))
 
 (defmethod proc-message :player-join-attempt [state msg]
   (let [room-id (:room msg)
         player-name (:player msg)
         new-room (add-player-room state room-id player-name)]
-    (send-player-in-room room-id player-name (player-in-room? state room-id player-name))))
+    (send-player-in-room room-id player-name (player-in-room? state room-id player-name))
+    new-room))
 
-(defmethod proc-message :player-left [state msg])
+(defmethod proc-message :player-left [state msg]
+  (let [room-id (:room msg)
+        player-name (:player msg)
+        new-room (remove-player-room state player-name room-id)]
+    new-room))
 
 (defn get-lazy-seq-http [])
 
