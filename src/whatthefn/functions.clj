@@ -12,6 +12,16 @@
         prev
         (recur (inc count) (+ prev prevprev) prev)))))
 
+(defn prime-factors [n]
+  (loop [acc #{}
+         t 2
+         rem n]
+    (if (> (* t t) rem)
+      (conj acc rem)
+      (if (= 0 (mod rem t))
+        (recur (conj acc t) 2 (/ rem t))
+        (recur acc (inc t) rem)))))
+
 (defn get-alpha[letter]
   "returns the index in the alphabet of the letter, i.e. A->1 (case insensitive)"
   (- (int (clojure.string/upper-case letter)) 64))
@@ -22,7 +32,8 @@
     (char shifted)))
 
 (def function-bases
- #{'("a friend of lucas" :numeral fib "our first function")})
+  #{'("a friend of lucas" :numeral fib "our first function")
+    '("a prime problem" :numeral prime-factors "second function")})
 
 (defn build-function [id [fname type body desc]]
   {:name fname :type type :id id :body body :description desc})
@@ -40,3 +51,6 @@
 (defn get-next-function
   ([seen-functions] (function-map (rand-int (count function-map))))
   ([] (get-next-function '())))
+
+(defn get-function [id]
+  (function-map id))
