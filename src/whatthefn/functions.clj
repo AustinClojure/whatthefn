@@ -71,7 +71,7 @@
   "returns the result of function <id> evaluated with argument <arg>"
   ((get-function id) arg))
 
-(defn test-function [f id]
+(defn test-function [id f]
   "returns true if the user function, <f> provides the same output as the game's function referred to by<id>, false otherwise"
   (let [against (get-function id)
         tests (:tests against)
