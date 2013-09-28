@@ -29,6 +29,10 @@
   (ensure-game-exists game-id)
   (@game-channels game-id))
 
+(defn write-to-game-channel!
+  [game-id event]
+  (>!! (game-channel game-id) event))
+
 (defn example
   []
   (let [game-channel (game-channel :my-game-id)
