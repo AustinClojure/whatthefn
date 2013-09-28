@@ -12,8 +12,9 @@
 
 (defn out-repl [resp]
   (.log js/console "out-repl: " (pr-str (:result resp)))
-  (let [old-val (dommy/value (sel1 :#repl))])
-   (dommy/set-value! (sel1 :#repl) (str  old-val (pr-str (:result resp))) "\n"))
+  (let [old-val (dommy/value (sel1 :#repl))
+        new-val  (str old-val (pr-str (:result resp)) "\n")]
+    (dommy/set-value! (sel1 :#repl) new-val)))
 
 
 (defn send-fn [fn-text]
