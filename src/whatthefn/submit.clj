@@ -1,5 +1,6 @@
 (ns whatthefn.submit
   (:require [whatthefn.sandbox :as sb]
+            [whatthefn.functions :as functions]
             [clojure.edn]))
 
 (defn edn-response [data]
@@ -22,18 +23,14 @@
 
 
 
-(def current-fn (atom {:fn (fn [x] (* x x))
-                       :tests [1 2 5 10 15 -4 0]}))
-
 (defn find-the-fn [sandbox]
   (try
     (sandbox 'the-fn)
     (catch Exception e
       nil)))
 
-(defn test-the-fn [sandbox fnspec]
-  (let [[real-fn test-cases] ((juxt :fn :tests) fnspec)
-        test-val (fn [val]
+(defn test-the-fn [sandbox real-fn test-cases]
+  (let [test-val (fn [val]
                    (try
                      (= (real-fn val)
                         (sandbox (list 'the-fn val)))
@@ -44,13 +41,14 @@
 
 (defn submit-fn [code]
   (try
-    (let [sandbox (sb/sandbox)
+    (let [current-fn @functions/current-fn
+          sandbox (sb/sandbox)
           eval-result (eval-code sandbox code)
           the-fn (find-the-fn sandbox)]
-
-      (println "XXX" code)
       (if the-fn
-        (edn-response {:result (test-the-fn sandbox @current-fn)})
+        (edn-response {:result (test-the-fn sandbox
+                                            (functions/function-impl current-fn)
+                                            (:tests current-fn))})
         (edn-response {:result "the-fn not found"})))
 
     (catch Exception e

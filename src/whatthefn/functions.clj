@@ -63,14 +63,9 @@
 (defn get-function [id]
   (function-map id))
 
-(defn eval-function [id arg]
-  "returns the result of function <id> evaluated with argument <arg>"
-  ((get-function id) arg))
 
-(defn test-function [id f]
-  "returns true if the user function, <f> provides the same output as the game's function referred to by<id>, false otherwise"
-  (let [against (get-function id)
-        tests (:tests against)
-        func (:body against)]
-    ((every? true? (for [test tests]
-                     (= (f test) (against test)))))))
+(defn function-impl [function-def]
+  (ns-resolve (find-ns 'whatthefn.functions) (:body function-def)))
+
+(defonce current-fn (atom (get-next-function)))
+
