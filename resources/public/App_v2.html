@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>What The &#131n!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Clojure programming game.">
+    <meta name="author" content="What The Fn!">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link href="css/style.css" rel="stylesheet" media="screen">
+
+ <script type="text/javascript">
+    $(function () {
+        $(".tip").tooltip();
+    });
+</script>
+  </head>
+
+  <body> 
+    <!-- NAVBAR ======================================================================================== -->
+      <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+          <div class="container">
+            <span class="hidden-phone">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">              
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>     
+            </button>
+            </span>
+
+            <!-- LOGO ==================================================================================== -->
+            <a class="brand" href="#"><span class="logo">WT<span class="fnlogo">&#131</span></span></a>
+
+            <div class="nav-collapse collapse">
+              <span class="hidden-phone">
+                <ul class="nav">
+                  <li class="active"><a href="#"><i class="icon-home icon-white"></i></a></li>
+                  <li><a href="#features">Features</a></li>
+                  <li><a href="#about">About</a></li>
+                  <li><a href="#contact">Contact</a></li>
+                </ul>
+              </span><!--/.hidden-phone-->
+
+              <!-- ACCOUNT  ============================================================================== -->
+              <span class="hidden-phone">
+                <div class="userprofile pull-right">
+                  <p><a href="#Account"><i class="icon-user icon-white"></i> #UserName</a></p>
+                </div><!--/.profile-->
+              </span><!--/.hidden-phone-->
+              <span class="visible-phone">
+                <div class="userprofile">
+                   <p style="margin-left: 20px;"><a href="#Account"><i class="icon-user icon-white"></i> UserName</a></p>
+                </div><!--/.profile-->
+              </span>
+            </div><!--nav-collapse-->
+          </div><!--/.container-->
+        </div><!--navbar-inner -->
+      </div><!--/..navbar-->
+
+    <!-- EDITOR ============================================================================================ -->
+
+    <div class="container">
+      <div class="row">
+        <div class="span9">
+    
+    <pre id="editor">; Write a function named mySeq which takes an integer and returns the next 5 integers
+; Example:
+; (mySeq 0)
+; => (1 2 3 4 5)
+
+(defn mySeq [x]
+  (take 5 (iterate inc (+ x 1))))</pre>
+       </div><!--/. **Editor span class ** -->
+        <div class="span3">
+          <label class="control-label" for="chat_window" hidden style="margin-bottom: -20px;">Chat Window</label>
+          
+          <textarea id="chat_window" 
+                    rows="24" readonly 
+                    style="margin-top: 43px; width: 100%;" 
+                    
+                    placeholder="User: (mySeq 1)                           > (2 3 4 5 6)                                 > User solved in 28s ->  +10pts"></textarea>
+
+        </div><!--/.span3-->
+      </div><!--/.row-->
+    <!-- ROW UNDER EDITOR ================================================================================ -->
+      <div class="row">
+        <div class="row_under_editor span1 tooltip-class">
+          <button  id="submitbutton" type="button" class="btn btn-primary" data-placement="left" data-toggle="tooltip" href="#" data-original-title="Submit for checking when complete">Submit</button>
+        </div><!--/. **Submit button span **-->
+        <div class="dropdown row_under_editor span1">
+          <a id="theme_selector" class="dropdown-toggle" data-toggle="dropdown" href="#">Theme<b class="caret"></b></a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            <li>Twilight</li>
+            <li>Chrome</li>
+          </ul>
+        </div><!-- dropdown row_under_editor span1 -->
+        <div class="row_under_editor span2 offset5">
+          <span id="clock" class="label">Time Remaining: 04:32</span>
+        </div><!--/.clock-->
+        <!-- CHAT INPUT BOX ============================================================================== -->
+        <div class="row_under_editor span3 pull-right">
+          <div>
+            <form class="form-inline">
+             <input id="chat_input_box" type="text" class="input-small" placeholder="chat..." >              
+            </form>
+          </div>
+      </div><!--/.row-->
+
+      <!-- REPL ========================================================================================== -->
+      <div class="row">
+        <div class="span12">
+  
+           <textarea id="repl" 
+                     rows="10" readonly 
+                     style="margin-top: -15px; margin-left: 20px; width: 100%;" 
+                     placeholder="REPL" > This is my REPL. There are many like it but this one is mine.
+ > (take 5 (iterate inc 0))
+(0 1 2 3 4)
+ > </textarea>
+           
+           
+           
+        </div><!--/.span12-->
+      </div><!--/.row-->
+      
+        
+        <div class="docs-popover">
+
+          <div class="popover left">
+            <div class="editortip">
+            <div class="arrow"></div>
+            <h3 class="popover-title">Code Editor</h3>
+            <div class="popover-content">
+              <p>Problem description, hints, and examples will appear in the comments section near the top. <br/> <br/>Write your solution in the editor and click the submit button before you run out of time!</p>
+            </div>
+            </div>
+          </div>
+
+
+          <div class="popover left">
+            <div class="repltip">
+            <div class="arrow"></div>
+            <h3 class="popover-title">Read Eval Print Loop</h3>
+            <div class="popover-content">
+              <p>Use this area to try your solution and view its output in your browser.</p>
+            </div>
+            </div>
+          </div>
+
+           <div class="popover right">
+            <div class="chattip">
+            <div class="arrow"></div>
+            <h3 class="popover-title">Chat Window / Game Status</h3>
+            <div class="popover-content">
+              <p>Use the chat window to submit some test input, monitor game progress, and collaborate with other players.</p>
+            </div>
+            </div>
+          </div>
+          
+    <!-- FOOTER ============================================================================================ -->
+      <div class="row">
+        <div class="span12">
+          <div id="footer">
+            <span class="pull-left">
+              <p>&#169 2013 WhatTheFn, LLC. 
+                <a href="#Terms"> Terms </a> <a href="Privacy"> Privacy </a>
+              </p>
+            </span>
+            <span class="pull-right">
+              <p>
+                <img src="img/glyphicons_social_21_github.png"> 
+                <img src="img/glyphicons_social_30_facebook.png">
+                <img src="img/glyphicons_social_31_twitter.png">
+                <img src="img/glyphicons_social_02_google_plus.png">
+                <img src="img/glyphicons_social_22_youtube.png">
+                <img src="img/glyphicons_social_39_e-mail.png">
+              </p>
+            </span><!--/.pull-right-->
+          </div><!--/#footer-->
+        </div><!--/.span12-->
+      </div><!--/.row-->
+
+    </div<!--/.container -->
+
+
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- TOOLTIP & POPOVER -->
+    <script >
+      $('.tooltip-class').tooltip({selector: "*[data-toggle=tooltip]"})      
+    </script>
+       
+    <!--<script src="js/application.js"></script> -->
+
+    <script src="js/src/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+
+
+
+var $ = document.getElementById.bind(document);
+var dom = require("ace/lib/dom");
+
+//add command to all new editor instaces
+require("ace/commands/default_commands").commands.push({
+    name: "Toggle Fullscreen",
+    bindKey: "F11",
+    exec: function(editor) {
+        dom.toggleCssClass(document.body, "fullScreen")
+        dom.toggleCssClass(editor.container, "fullScreen")
+        editor.resize()
+    }
+}, {
+    name: "add",
+    bindKey: "Shift-Return",
+    exec: add
+})
+
+// create first editor
+var editor = ace.edit("editor");
+editor.setTheme("ace/theme/twilight");
+editor.session.setMode("ace/mode/clojure");
+editor.setReadOnly(false);
+
+
+var count = 1;
+function add() {
+    var oldEl = editor.container
+    var pad = document.createElement("div")
+    pad.style.padding = "40px"
+    oldEl.parentNode.insertBefore(pad, oldEl.nextSibling)
+
+    var el = document.createElement("div")
+    oldEl.parentNode.insertBefore(el, pad.nextSibling)
+
+    count++
+    var theme = "ace/theme/" + themes[Math.floor(themes.length * Math.random() - 1e-5)]
+    editor = ace.edit(el)
+    editor.setTheme(theme)
+    editor.session.setMode("ace/mode/clojure")
+
+    editor.setValue([
+        "this is editor number: ", count, "\n",
+        "using theme \"", theme, "\"\n",
+        ":)"
+    ].join(""), -1)
+
+    scroll()
+}
+
+
+function scroll(speed) {
+    var top = editor.container.getBoundingClientRect().top
+    speed = speed || 10
+    if (top > 60 && speed < 500) {
+        if (speed > top - speed - 50)
+            speed = top - speed - 50
+        else
+            setTimeout(scroll, 10, speed + 10)
+        window.scrollBy(0, speed)
+    }
+}
+
+var themes = {
+    bright: [ "chrome", "clouds", "crimson_editor", "dawn", "dreamweaver", "eclipse", "github",
+        "solarized_light", "textmate", "tomorrow"],
+    dark: [ "clouds_midnight", "cobalt", "idle_fingers", "kr_theme", "merbivore", "merbivore_soft",
+        "mono_industrial", "monokai", "pastel_on_dark", "solarized_dark",  "tomorrow_night",
+        "tomorrow_night_blue", "tomorrow_night_bright", "tomorrow_night_eighties", "twilight", "vibrant_ink"]
+}
+themes = [].concat(themes.bright, themes.dark)
+setTimeout(function(){ window.scrollTo(0,0) }, 10)
+
+
+    </script>
+
+  </body>
+</html>
