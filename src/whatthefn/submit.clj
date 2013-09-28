@@ -31,8 +31,8 @@
     (catch Exception e
       nil)))
 
-(defn test-the-fn [sandbox]
-  (let [[real-fn test-cases] ((juxt :fn :tests) @current-fn)
+(defn test-the-fn [sandbox fnspec]
+  (let [[real-fn test-cases] ((juxt :fn :tests) fnspec)
         test-val (fn [val]
                    (try
                      (= (real-fn val)
@@ -50,7 +50,7 @@
 
       (println "XXX" code)
       (if the-fn
-        (edn-response {:result (test-the-fn sandbox)})
+        (edn-response {:result (test-the-fn sandbox @current-fn)})
         (edn-response {:result "the-fn not found"})))
 
     (catch Exception e
