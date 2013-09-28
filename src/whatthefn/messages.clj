@@ -32,3 +32,19 @@
     (if message-id
       (rest (drop-while #(not= message-id (:id %)) @messages))
       @messages)))
+
+(defn maybe-parse-number
+  "Tries to parse string as an int, otherwise returns default value"
+  [string & [default]]
+  (try (java.lang.Integer/parseInt string)
+    (catch Exception e default)))
+
+(defn get-messages
+  "Parameters:
+   since: the message id of the last message received by the client
+   limit: return up to the n most recent messages
+   room-id: the room id"
+  [req]
+  (let [{:keys [limit since room-id]} (:params req)]
+    (->> (messages-since room-id since)
+         (take-last (maybe-parse-number limit 10)))))

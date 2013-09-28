@@ -46,7 +46,7 @@
        (whatthefn.submit/submit-value value))
 
   (GET "/rooms/:room-id/messages" {{room-id :room-id since :since} :params}
-       (json-response (messages/messages-since room-id since)))
+       (comp json-response messages/get-messages))
   (POST "/rooms/:room-id/messages" {{room-id :room-id message :message} :params}
         (json-response (messages/new-message! room-id {:str message})))
 
