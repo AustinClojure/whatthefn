@@ -2,12 +2,13 @@
 
 /* ACE EDITOR */
 #editor { position: relative !important;
-          border: 1px solid lightgray;
+          /*border: 1px solid lightgray;*/
           margin-top: 0px; /* Navbars @ ~43px */
           height: 500px;
           width: 100%;
-          padding: 0 0 0 0;          
+          /*padding: 0 0 0 0;  */
         }
+
 #editor.fullScreen { height: auto;
                      width: auto;
                      border: 0;
@@ -28,23 +29,25 @@
                 text-align: center;
               }
 
-.large-button { color: lightblue;
-                cursor: pointer;
-                font: 30px arial;
-                padding: 20px;
-                text-align: center;
-                border: medium solid transparent;
-                display: inline-block;
-              }
-.large-button:hover { border: medium solid lightgray;
-                      border-radius: 10px 10px 10px 10px;
-                      box-shadow: 0 0 12px 0 lightblue;
-                    }
+/* STATUS WINDOW */
 
+/*
+.status_window textarea { width: 100%;
+                          height: 500px;
+                        }
 
-/* CHAT WINDOW */
-#chat_window { margin-top: 0px; /* Navbars @ ~43px */
-               margin-left: -5px;
+/*
+#status_window { margin-top: 0px; 
+               margin-left: 0px;
                padding: 0 0 0 0;
                width: 100%;
- }
+ } 
+*/
+
+#statusbox {  width: 100%; }
+
+/* REPL BOX */
+
+#repl { 
+        width: 100%;
+      }
