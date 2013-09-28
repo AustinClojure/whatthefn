@@ -63,9 +63,7 @@
 (defn get-function [id]
   (function-map id))
 
-
 (defn function-impl [function-def]
   (ns-resolve (find-ns 'whatthefn.functions) (:body function-def)))
 
 (defonce current-fn (atom (get-next-function)))
-

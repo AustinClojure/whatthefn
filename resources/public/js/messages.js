@@ -1,4 +1,9 @@
 (function($) {
+  var Clock = Backbone.Model.extend({
+    millisecondsRemaining: function() {
+      return this.get('deadline') - this.get('current');
+    }
+  });
 
   var Message = Backbone.Model.extend({
     getChatString: function() {
@@ -6,8 +11,20 @@
     }
   });
 
+  var ChatMessage = Backbone.Model.extend({
+    getChatString: function() {
+      return this.get('player') + ': ' + this.get('string');
+    }
+  });
+
   var Messages = Backbone.Collection.extend({
-    model: Message
+    model: function(attrs, options) {
+      if (attrs.type == 'chat') {
+        return new ChatMessage(attrs, options);
+      } else {
+        return new Message(attrs, options);
+      }
+    }
   });
 
   var MessageQueue = Backbone.Model.extend({
@@ -15,12 +32,18 @@
       'isStopped': false,
       'roomId': 'room-a',
       'pollInterval': 2500,
-      'handlerFunction': function() {}
+      'handlerFunction': function() {},
+      'tickFunction': function() {}
     },
 
     initialize: function() {
       this.set('messages', new Messages());
       this.get('messages').on('add', this.handleNewMessage, this);
+
+      this.set('clock', new Clock({
+        deadline: Date.now() + 5 * 60 * 1000
+      }));
+      this.get('clock').on('change', this.callTickFunction, this);
     },
 
     start: function() {
@@ -39,7 +62,7 @@
       }
       var params = this.get('messages').isEmpty() ? {} : {since: this.latestMessageId()};
 
-      $.getJSON(this.messagesPath(), params, _.bind(this.addMessages, this));
+      $.getJSON(this.messagesPath(), params, _.bind(this.handleResponse, this));
 
       setTimeout(_.bind(this.poll, this), this.get('pollInterval'));
     },
@@ -52,13 +75,19 @@
       return '/rooms/' + this.get('roomId') + '/messages';
     },
 
-    addMessages: function(messages) {
-      this.get('messages').add(messages);
+    handleResponse: function(response) {
+      this.get('clock').set('current', response['server-time-unix-millis']);
+      this.get('messages').add(response.messages);
     },
 
     handleNewMessage: function(message) {
       this.get('handlerFunction').call(null, message);
-    }
+    },
+
+    callTickFunction: function() {
+      console.log(this.get('clock').millisecondsRemaining());
+      this.get('tickFunction').call(null, this.get('clock').millisecondsRemaining());
+    },
   });
 
   window.MessageQueue = MessageQueue;
