@@ -90,7 +90,6 @@
     (catch Exception e
       (callback {:type :function-eval-result :result false :message (.getMessage e)}))))
 
-
 (defn submit-value-engine [value-str callback]
   "get the output for a single input"
   (let [sandbox (sb/sandbox)]
