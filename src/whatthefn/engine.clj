@@ -38,7 +38,7 @@
 
 ;;message processing
 
-(defmulti proc-message :type)
+(defmulti proc-message #(:type %2))
 
 (defmethod proc-message :resolve-input [state msg]
   (let [room (:room msg)
@@ -59,4 +59,7 @@
 
       state)))
 
-(defn start-engine [])
+(defn get-seq [])
+
+(defn start-engine []
+  (reduce proc-message state (get-seq)))
