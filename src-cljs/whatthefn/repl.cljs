@@ -16,7 +16,6 @@
   (let [repl (sel1 :#repl)]
     (dommy/set-value! repl
      (str (dommy/value repl)
-          "\n"
           text
           "\n> ")))
   (update-cursor))
