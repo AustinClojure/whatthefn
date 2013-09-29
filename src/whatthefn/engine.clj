@@ -8,7 +8,7 @@
 ;;initialize state
 
 (defn new-room [name]
-  {:name name :current-func nil :seen-functions '() :players #{} :state :waiting-for-players :winners #{} :channel nil})
+  {:name name :current-func nil :seen-functions '() :players #{} :state :waiting-for-players :winners #{} :channel nil :round-id 1})
 
 (defn get-initial-state [name]
   {:rooms {name (new-room name)}})
@@ -110,11 +110,15 @@
 (defn reset-round [state room-id]
   (let [winners-cleared (clear-winners state room-id)
         function-added (refresh-function winners-cleared room-id)
-        state-reset (assoc-in function-added [:rooms room-id :state] :waiting-for-players)]
+        round-id-inced (update-in function-added [:rooms room-id :round-id] inc)
+        state-reset (assoc-in round-id-inced [:rooms room-id :state] :waiting-for-players)]
     state-reset))
 
 (defn game-starts [state room-id]
   (prn "game starts!")
+  (.start (Thread.
+           (Thread/sleep 10000)
+           (send-message-self (get-channel state room-id) {:type :force-end :room room-id :round-id (get-in state [:rooms room-id :channel])})))
   (send-round-begins room-id (build-room-data state room-id))
   (assoc-in state [:rooms room-id :state] :round-playing))
 
@@ -208,6 +212,13 @@
         player-name (:player msg)
         new-room (remove-player-room state room-id player-name)]
     new-room))
+
+(defmethod proc-message :force-end [state msg]
+  (let [room-id (:room msg)
+        round-id (:round-id msg)]
+    (if (= round-id (get-in state [:rooms room-id :round-id]))
+      (game-ends state room-id)
+      state)))
 
 (defmethod proc-message :tick [state msg]
   state)
