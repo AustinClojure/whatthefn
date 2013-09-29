@@ -132,7 +132,6 @@
 (defonce current-fn (atom (get-next-function)))
 
 (defn test-fun [id arg callback]
-  (println "!!!!")
   (try
     (let [fun (:body (function-map id))]
       (prn "test-fun" (fun arg))
