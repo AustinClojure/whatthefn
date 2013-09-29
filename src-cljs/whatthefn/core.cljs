@@ -9,8 +9,10 @@
 ;; ----------------------------------------
 (defn out-field [resp]
   (.log js/console "out-field: " (pr-str (:result resp)))
-  (-> (sel1 :#statusbox)
-      (dommy/append! (str "\nResult: " (pr-str (:result resp))))))
+  (.testSolution js/api (pr-str (:result resp)))
+  
+  (comment  (-> (sel1 :#statusbox)
+                (dommy/append! (str "\nResult: " (pr-str (:result resp)))))))
 
 
 (defn send-fn [fn-text]
@@ -21,7 +23,13 @@
 
 
 (defn submit-clicked []
-  (send-fn (.getValue js/editor)))
+  (.testSolution js/api (.getValue js/editor)))
+
+(defn set-session-id []
+  (.log js/console js/api)
+  (let [user (.username js/api)]
+    (-> (sel1 :#session_button)
+        (dommy/set-text! (str " Sign Out: " user)))))
 
 ;; ----------------------------------------
 
@@ -30,4 +38,6 @@
   (-> (sel1 :#submitbutton)
       (dommy/listen! :click submit-clicked))
   (repl/init-repl)
-  (chat/init-chat))
+  (chat/init-chat)
+
+  (.log js/console "started"))
