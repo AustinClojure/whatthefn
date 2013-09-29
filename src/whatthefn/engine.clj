@@ -207,9 +207,8 @@
 (defmethod proc-message :tick [state msg]
   state)
 
-(defn start-engine []
-  (let [room-id "the-room"
-        game-channel (evs/game-channel room-id)
+(defn start-engine [room-id]
+  (let [game-channel (evs/game-channel room-id)
         state-transition-function proc-message
         initial-state (get-initial-state)
         state-with-function (refresh-function initial-state room-id)
