@@ -31,7 +31,7 @@
     defaults: {
       'isStopped': false,
       'roomId': 'room-a',
-      'pollInterval': 2500,
+      'pollInterval': 1000,
       'handlerFunction': function() {},
       'tickFunction': function() {}
     },
@@ -41,7 +41,7 @@
       this.get('messages').on('add', this.handleNewMessage, this);
 
       this.set('clock', new Clock({
-        deadline: Date.now() + 5 * 60 * 1000
+        deadline: Date.now() + 2.5 * 60 * 1000
       }));
       this.get('clock').on('change', this.callTickFunction, this);
     },
@@ -85,7 +85,6 @@
     },
 
     callTickFunction: function() {
-      console.log(this.get('clock').millisecondsRemaining());
       this.get('tickFunction').call(null, this.get('clock').millisecondsRemaining());
     },
   });
