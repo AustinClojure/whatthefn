@@ -10,7 +10,9 @@
       (dommy/set-value! "")))
 
 (defn out-chat [msg]
-  (.chat js/api (str msg))
+  (if-let [[_ input] (re-matches #"^\(the-fn (.*)\)" (str msg))]
+    (.resolveInput js/api input)
+    (.chat js/api (str msg)))
   (clear-old-message))
 
 (comment
