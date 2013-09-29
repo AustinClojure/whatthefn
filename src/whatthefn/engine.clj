@@ -111,7 +111,7 @@
   (let [winners-cleared (clear-winners state room-id)
         function-added (refresh-function winners-cleared room-id)
         state-reset (assoc-in function-added [:rooms room-id :state] :waiting-for-players)]
-    function-added))
+    state-reset))
 
 (defn game-starts [state room-id]
   (prn "game starts!")
@@ -127,8 +127,8 @@
 (defn game-ends [state room-id]
   (prn "game ends!")
   (send-round-ends room-id)
-  (reset-round state room-id)
-  (check-game-starts state room-id))
+  (let [reset-state (reset-round state room-id)]
+    (check-game-starts reset-state room-id)))
 
 (defn check-game-ends [state room-id]
   (let [game-state (get-room-state state room-id)]
