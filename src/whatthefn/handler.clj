@@ -6,6 +6,7 @@
             [ring.middleware.edn :as edn-params]
             [ring.middleware.session.memory :as mem]
             [ring.util.response :as response]
+            [whatthefn.auth :as auth]
             [whatthefn.messages :as messages]
             [whatthefn.gameapi :as gameapi]
             [whatthefn.submit]))
@@ -21,8 +22,14 @@
 (defn static-file [file]
   (response/file-response file {:root "resources/public"}))
 
-(defroutes app-routes
+(defroutes no-auth-routes
   (GET "/" [] (static-file "/index.html"))
+  (POST "/login" [username password :as req] (auth/login req username password))
+  (POST "/logout" [] (auth/logout))
+  (route/resources "/")
+  (GET "/session" [:as req] {:body (pr-str (:session req))}))
+
+(defroutes auth-routes
   (GET "/app" [] (static-file "/app.html") )
 
   (POST "/submit-fn" [code]
@@ -39,15 +46,11 @@
   (POST "/rooms/:room-id/events" {{room-id :room-id message :message} :params}
         (comp json-response gameapi/handler))
 
-
-  (POST "/login" [username password :as req] (whatthefn.auth/login req username password))
-  (POST "/logout" [] (whatthefn.auth/logout))
-
-  (GET "/session" [:as req] {:body (pr-str (:session req))})
-
-  (route/resources "/")
   (route/not-found "Not Found"))
 
+(defroutes app-routes
+  no-auth-routes
+  (auth/wrap-require-user auth-routes))
 
 (def app
   (-> app-routes
