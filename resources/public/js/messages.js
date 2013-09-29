@@ -16,13 +16,23 @@
       return 'A new round has started!';
     },
 
+    getSampleValue: function() {
+      if (this.get('round-data').type === 'numeric') {
+        return '77';
+      } else if (this.get('round-data').type === 'string') {
+        return '"my string"';
+      } else if (this.get('round-data').type === 'numeric-collection') {
+        return '[1 2 3]';
+      }
+    },
+
     getEditorString: function() {
       return ";====================================================\n" +
              ";    Function Name: " + this.get('round-data').name + "\n" +
              ";====================================================\n" +
              ";    Function Type: " + this.get('round-data').type + "\n" +
              ";====================================================\n" +
-             ";    Run (the-fn some-value) from the chat to get hints!\n" +
+             ";    Run (the-fn " + this.getSampleValue() + ") from the chat to get hints!\n" +
              ";====================================================\n" +
              "(defn the-fn\n" +
              "  [x]\n" +
