@@ -35,11 +35,11 @@
 
 (defn example
   []
-  (let [game-channel (game-channel :my-game-id)
+  (let [c (game-channel "abc")
         state-transition-function (fn [state event] state)]
     (go
       (loop [game-state {:starting :game-state}]
-        (let [next-event (<!! game-channel)]
+        (let [next-event (<!! c)]
           (prn next-event)
           ;write broadcast message here
           (recur (state-transition-function game-state next-event)))))))
