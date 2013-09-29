@@ -5,6 +5,15 @@
       'playerId': 'newbie'
     },
 
+    join: function(input) {
+      this.sendEvent({
+	type: 'player-join-attempt',
+        player: this.get('playerId'),
+	room: this.get('roomId'),
+	arg: input
+      });
+    },
+
     resolveInput: function(input) {
       this.sendEvent({
         type: 'resolve-input',
