@@ -61,8 +61,10 @@
   no-auth-routes
   (auth/wrap-require-user auth-routes))
 
+(defonce session-atom (atom {}))
+(defonce session (mem/memory-store session-atom))
+
 (def app
   (-> app-routes
       (edn-params/wrap-edn-params)
-      (handler/site
-       {:store (mem/memory-store)})))
+      (handler/site {:session {:store session}})))
