@@ -94,7 +94,7 @@
           the-fn (find-the-fn sandbox)]
       (if the-fn
         (callback {:type :function-eval-result
-                   :result (test-the-fn sandbox (:body our-func) (:tests our-func))})
+                   :result (test-the-fn sandbox (:body our-func) (:tests our-func)) :message "function-evaled" :orig orig})
         (callback {:type :function-eval-result :result false :message "the-fn not found" :orig orig})))
     (catch Exception e
       (.printStackTrace e)

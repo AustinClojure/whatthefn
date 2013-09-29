@@ -37,7 +37,7 @@
 
 (defn send-message-self [channel message]
   (prn "trying to send self:" message)
-  (go #(>!! channel message)))
+  (go (>!! channel message)))
 
 ;;state util
 
