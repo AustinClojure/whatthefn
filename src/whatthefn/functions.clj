@@ -50,6 +50,9 @@
              (recur (quot num 10)
                     (+' (*' acc 10) (mod num 10)))))))
 
+(defn even-digits [n]
+  (count (filter #{\2 \4 \6 \8 \0} (str n))))
+
 (defn our-name [n]
   (let [nm "what the fn!"]
     (try (nth nm n)
@@ -78,7 +81,9 @@
     ["follow the 1 through the trail!!!" :numeric follow-the #{1 99 200 700}]
     ["prime?" :numeric prime? #{1 2 16 7 23 8}]
     ["the even part" :numeric-collection even-only #{#{1 2 3 4} #{3 4 5 19 20 1}}]
-    ["Mirror Mirror" :numeral reverse-num "on the wall" #{-1020301 -45 0 1000 1234 90909}]})
+    ["Mirror Mirror" :numeral reverse-num "on the wall" #{-1020301 -45 0 1000 1234 90909}]
+    ["An even-handed problem" :numeral even-digits "It's not odd at all." #{222 333 1234567890 -9876543210 50000}]
+    })
 
 
 (defn plus2 [n]
