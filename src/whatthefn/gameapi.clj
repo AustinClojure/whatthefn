@@ -40,6 +40,17 @@
                            :player player
                            :room room-id}))
 
+(defn function-eval-result
+  [{:keys [room-id player function orig func-id result]}]
+  (write-to-game-channel! room-id
+                          {:type :function-eval-result
+                           :result result
+                           :orig orig
+                           :room room-id
+                           :player player
+                           :func-id func-id
+                           :function function}))
+
 (defn handler
   [req]
   (case (:type (:params req))
@@ -47,4 +58,5 @@
     "resolve-input" (resolve-input (:params req))
     "test-solution" (test-solution (:params req))
     "player-join-attempt" (player-join-attempt (:params req))
-    "player-left" (player-left (:params req))))
+    "player-left" (player-left (:params req))
+    "function-eval-result" (function-eval-result (:params req))))

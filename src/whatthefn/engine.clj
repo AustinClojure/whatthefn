@@ -177,6 +177,8 @@
   "we got a function to grade"
   (let [f (:function msg)
         room (:room msg)]
+    (prn f)
+    (prn room)
     (subm/submit-fn-engine f (:body (get-current-function state room)) (partial send-message-self (get-channel state room)) msg)))
 
 (defmethod proc-message :function-eval-result [state cb]
