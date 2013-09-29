@@ -10,7 +10,7 @@
            prevprev 0]
       (if (= count n)
         prev
-        (recur (inc count) (+ prev prevprev) prev)))))
+        (recur (inc count) (+' prev prevprev) prev)))))
 
 (defn prime-factors [n]
   (loop [acc #{}
