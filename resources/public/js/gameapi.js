@@ -9,8 +9,7 @@
       this.sendEvent({
 	type: 'player-join-attempt',
         player: this.get('playerId'),
-	room: this.get('roomId'),
-	arg: input
+	room: this.get('roomId')
       });
     },
 
