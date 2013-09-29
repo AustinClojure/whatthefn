@@ -88,10 +88,10 @@
     (catch Exception e
       (callback {:type :function-eval-result :result false :message (.getMessage e) :orig orig}))))
 
-(defn submit-value-engine [value-str callback]
+(defn submit-value-engine [value-str our-func callback]
   "get the output for a single input"
   (let [sandbox (sb/sandbox)]
-    (sandbox '(def the-fn (fn [x] (* x x))))
+    (sandbox '(def the-fn our-func))
     (try
       (callback (sandbox (list 'the-fn (clojure.edn/read-string value-str))))
       (catch Exception e

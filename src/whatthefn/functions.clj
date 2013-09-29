@@ -41,11 +41,16 @@
   (let [shifted (+ alpha 64)]
     (char shifted)))
 
+
 (def function-bases
   #{'("a friend of lucas" :numeral fib "our first function" #{2 5 10})
     '("a prime problem" :numeral prime-factors "second function" #{7 9 24 12 30})
     '("what's the opposite of gestalt?" :numeral sum-prime-factors "third function" #{7 9 8 24 12 30})
     '("a matter of fact" :numeral factorial "4th function" #{2 5 3})})
+
+(def function-bases
+  #{'("+ 2" :numeral #(+ % 2) "test me" #{2 4 100})
+    '("* 3" :numerla #(* % 3) "test me" #{2 4 202})})
 
 (defn build-function [id [fname type body desc tests]]
   {:name fname :type type :id id :body body :description desc :tests tests})

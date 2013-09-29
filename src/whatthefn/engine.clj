@@ -8,7 +8,7 @@
 ;;initialize state
 
 (defn new-room [name]
-  {:name name :current-func nil :seen-functions '() :player-names #{} :state :waiting-for-players :winners #{} :channel nil})
+  {:name name :current-func nil :seen-functions '() :players #{} :state :waiting-for-players :winners #{} :channel nil})
 
 (defn get-initial-state []
   {:rooms {:the-room (new-room :the-room)}})
@@ -91,7 +91,7 @@
   (let [rooms (:rooms state)
         room (rooms room-id)
         players (:players room)]
-    (update-in state [:rooms room-id :players] (disj (get-in state [:rooms room-id :players]) player-name))))
+    (update-in state [:rooms room-id :players] (disj players player-name))))
 
 (defn add-player-room [state room-id player-name]
   (let [rooms (:rooms state)
@@ -124,9 +124,8 @@
 
 (defmethod proc-message :resolve-input [state msg]
   (let [room (:room msg)
-        arg (:arg msg)
-        id (:func-id msg)]
-    (subm/submit-value-engine arg (partial send-fn-resolve-result room arg))
+        arg (:arg msg)]
+    (subm/submit-value-engine arg (get-current-function state room) (partial send-fn-resolve-result room arg))
     state))
 
 (defmethod proc-message :test-solution [state msg]
@@ -155,7 +154,7 @@
 (defmethod proc-message :player-left [state msg]
   (let [room-id (:room msg)
         player-name (:player msg)
-        new-room (remove-player-room state player-name room-id)]
+        new-room (remove-player-room state room-id player-name)]
     new-room))
 
 (defn start-engine []
