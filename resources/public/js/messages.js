@@ -121,7 +121,7 @@
       this.get('messages').on('add', this.handleNewMessage, this);
 
       this.set('clock', new Clock({
-        deadline: Date.now() + .25 * 60 * 1000
+        deadline: Date.now() + 5 * 60 * 1000
       }));
       this.get('clock').on('change', this.callTickFunction, this);
     },
