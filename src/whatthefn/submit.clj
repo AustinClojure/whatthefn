@@ -96,6 +96,6 @@
   (let [sandbox (sb/sandbox)]
     (sandbox (list ))
     (try
-      (callback (sandbox (list 'the-fn (clojure.edn/read-string value-str))))
+      (callback (sandbox (list 'our-func (clojure.edn/read-string value-str))))
       (catch Exception e
         (callback (.getMessage e))))))
