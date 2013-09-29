@@ -8,7 +8,7 @@
   <div id='app'>
     <div class='game'>
       <p>Room ID: <input type='text' class='room' value='the-room'></input></p>
-      <p>Player Name: <input type='text' class='player' value='def'></input></p>
+      <p>Player Name: <input type='text' class='player' value='defa'></input></p>
     </div>
 
     <div class='buttons'>
@@ -17,6 +17,7 @@
       <button class='chat'>Chat!</button>
       <button class='resolve'>Resolve!</button>
       <button class='test'>Test!</button>
+      <button class='leave'>Leave!</button>
     </div>
     <div class='messagesLog'></div>
   </div>
@@ -70,7 +71,8 @@
       'click .chat': 'chat',
       'click .join': 'join',
       'click .resolve': 'resolve',
-      'click .test': 'test'
+      'click .test': 'test',
+      'click .leave': 'leave'
     },
 
     chat: function() {
@@ -78,7 +80,7 @@
     },
 
     join: function() {
-      //this.model.chat(this.pullVal());
+      this.model.join(this.pullVal());
     },
 
     resolve: function() {
@@ -87,6 +89,10 @@
 
     test: function() {
       this.model.testSolution(this.pullVal());
+    },
+
+    leave: function() {
+      this.model.leave(this.pullVal());
     },
 
     pullVal: function() {

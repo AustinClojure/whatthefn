@@ -14,26 +14,30 @@
   (write-to-game-channel! room-id
                           {:type :resolve-input
                            :player player
-                           :arg arg}))
+                           :arg arg
+                           :room room-id}))
 
 (defn test-solution
   [{:keys [room-id player function]}]
   (write-to-game-channel! room-id
                           {:type :test-solution
                            :player player
-                           :function function}))
+                           :function function
+                           :room room-id}))
 
 (defn player-join-attempt
   [{:keys [room-id player]}]
   (write-to-game-channel! room-id
                           {:type :player-join-attempt
-                           :player player}))
+                           :player player
+                           :room room-id}))
 
 (defn player-left
   [{:keys [room-id player]}]
   (write-to-game-channel! room-id
                           {:type :player-left
-                           :player player}))
+                           :player player
+                           :room room-id}))
 
 (defn handler
   [req]

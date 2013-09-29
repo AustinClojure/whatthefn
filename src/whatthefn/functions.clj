@@ -47,9 +47,15 @@
     ["what's the opposite of gestalt?" :numeral sum-prime-factors "third function" #{7 9 8 24 12 30}]
     ["a matter of fact" :numeral factorial "4th function" #{2 5 3}]})
 
+(defn plus2 [n]
+  (+ n 2))
+
+(defn times3 [n]
+  (* 3 n))
+
 (def function-bases
-  #{["+ 2" :numeral #(+ % 2) "test me" #{2 4 100}]
-    ["* 3" :numeral #(* % 3) "test me" #{2 4 202}]})
+  #{["+ 2" :numeral plus2 "test me" #{2 4 100}]
+    ["* 3" :numeral times3 "test me" #{2 4 202}]})
 
 (defn build-function [id [fname type body desc tests]]
   {:name fname :type type :id id :body body :description desc :tests tests})
@@ -64,9 +70,6 @@
   ([seen-functions] (function-map (rand-int (count function-map))))
   ([] (get-next-function '())))
 
-(defn get-function [id]
-  (function-map id))
-
 (defn function-impl [function-def]
   (ns-resolve (find-ns 'whatthefn.functions) (:body function-def)))
 
@@ -74,9 +77,7 @@
 
 (defn test-fun [id arg callback]
   (try
-    (let [fun (:body (get-function id))]
-      (prn fun)
-      (prn (fun arg))
+    (let [fun (:body (function-map id))]
       (callback (fun arg)))
     (catch Exception e
       (callback (.getMessage e)))))

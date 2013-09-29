@@ -1,23 +1,40 @@
 (function($) {
   var GameApi = Backbone.Model.extend({
     defaults: {
-      'roomId': 'room-a',
-      'playerId': 'player-a'
+      'roomId': 'the-room',
+      'playerId': 'newbie'
+    },
+
+    join: function(input) {
+      this.sendEvent({
+	type: 'player-join-attempt',
+        player: this.get('playerId'),
+	room: this.get('roomId')
+      });
     },
 
     resolveInput: function(input) {
       this.sendEvent({
         type: 'resolve-input',
         player: this.get('playerId'),
+        room: this.get('roomId'),
         arg: input
       });
     },
 
     testSolution: function(solution) {
       this.sendEvent({
-        type: 'resolve-input',
+        type: 'test-solution',
         player: this.get('playerId'),
         'function': solution
+      });
+    },
+    
+    leave: function(input) {
+      this.sendEvent({
+	type: 'player-left',
+	player: this.get('playerId'),
+        room: this.get('roomId')
       });
     },
 
