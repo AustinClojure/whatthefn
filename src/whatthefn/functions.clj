@@ -70,8 +70,15 @@
 (defn even-only [n]
   (filter even? n))
 
+(defn quadratic [a b c]
+  (fn [n]
+    (+ (* a n n)
+       (* b n)
+       c)))
+
 (def function-bases
-  #{["a friend of lucas" :numeric fib "our first function" #{2 5 10}]
+  #{
+    ["a friend of lucas" :numeric fib "our first function" #{2 5 10}]
     ["a prime problem" :numeric prime-factors "second function" #{7 9 24 12 30}]
     ["what's the opposite of gestalt?" :numeric sum-prime-factors "third function" #{7 9 8 24 12 30}]
     ["a matter of fact" :numeric factorial "4th function" #{2 5 3}]
@@ -86,7 +93,14 @@
     ["all together" :numeric-collection #(reduce + %) "add it up" #{#{2 3} #{1 3 5}}]
     ["how many are under ten?" :numeric-collection #(clojure.set/difference (range 10) %)]
     ["An even-handed problem" :numeral even-digits "It's not odd at all." #{222 333 1234567890 -9876543210 50000}]
-    ["Mirror Mirror" :numeral reverse-num "on the wall" #{-1020301 -45 0 1000 1234 90909}]})
+
+    ["Mirror Mirror" :numeral reverse-num "on the wall" #{-1020301 -45 0 1000 1234 90909}]
+    ["Quadratic 1" :numeral (quadratic 3 1 4) "a simple quadratic" #{-10 -5 0 5 10 20 100}]
+    ["Quadratic 2" :numeral (quadratic 2 4 8) "a simple quadratic" #{-10 -5 0 5 10 20 100}]
+    ["Quadratic 3" :numeral (quadratic -9 1 1) "a simple quadratic" #{-10 -5 0 5 10 20 100}]
+    ["Quadratic 4" :numeral (quadratic 101 47 17) "a simple quadratic" #{-10 -5 0 5 10 20 100}]
+    ["Quadratic 5" :numeral (quadratic 90 2 10) "a simple quadratic" #{-10 -5 0 5 10 20 100}]
+    })
 
 (defn plus2 [n]
   (+ n 2))
@@ -117,6 +131,7 @@
 (defonce current-fn (atom (get-next-function)))
 
 (defn test-fun [id arg callback]
+  (println "!!!!")
   (try
     (let [fun (:body (function-map id))]
       (prn "test-fun" (fun arg))
