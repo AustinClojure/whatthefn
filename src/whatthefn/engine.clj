@@ -44,8 +44,9 @@
   (get-in state [:rooms room-id :state]))
 
 (defn get-current-function [state room-id]
-  (prn state)
   (prn room-id)
+  (prn (:rooms state))
+  (prn ((:rooms state) room-id))
   (let [rooms (:rooms state)
         room (rooms room-id)]
     (:current-func room)))
