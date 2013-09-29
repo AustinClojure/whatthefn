@@ -43,6 +43,11 @@
   (try (java.lang.Integer/parseInt string)
     (catch Exception e default)))
 
+(defn compose-response
+  [messages]
+  {:server-time-unix-millis (coerce/to-long (time/now))
+   :messages messages})
+
 (defn get-messages
   "Parameters:
    since: the message id of the last message received by the client
@@ -51,4 +56,5 @@
   [req]
   (let [{:keys [limit since room-id]} (:params req)]
     (->> (messages-since room-id since)
-         (take-last (maybe-parse-number limit 10)))))
+         (take-last (maybe-parse-number limit 10))
+         compose-response)))
