@@ -7,13 +7,18 @@
 
   var Message = Backbone.Model.extend({
     getChatString: function() {
-      return 'Message id ' + this.get('id') + ': Time: ' + this.get('server-time-unix-millis');
+      return 'Message id ' + this.get('id') + ': Type: ' + this.get('type');
     }
   });
 
   var NewRoundMessage = Backbone.Model.extend({
     getChatString: function() {
       return 'A new round has started!';
+    },
+
+    getEditorString: function() {
+      return ";Function Name: " + this.get('round-data').name + "\n" +
+             ";Function Type: " + this.get('round-data').type + "\n";
     }
   });
 
@@ -51,7 +56,7 @@
     model: function(attrs, options) {
       if (attrs.type == 'chat') {
         return new ChatMessage(attrs, options);
-      } else if (attrs.type == 'new-round') {
+      } else if (attrs.type == 'round-begins') {
         return new NewRoundMessage(attrs, options);
       } else if (attrs.type == 'test') {
         return new TestMessage(attrs, options);

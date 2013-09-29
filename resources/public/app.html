@@ -251,6 +251,14 @@
   </div><!--/.container-->
 </footer>
 
+<script type='text/javascript'>
+function handleMessage(msg) {
+  jQuery('#statusbox').append("\n" + msg.getChatString());
+  if (msg.get('type') === 'round-begins') {
+    editor.setValue(msg.getEditorString());
+  }
+}
+</script>
 
 <!-- FROM THE ACE scrollable-page DEMO ============================================== -->
 <script>
@@ -381,18 +389,12 @@
     var mq = new MessageQueue({
     roomId: 'room-a',
     tickFunction: myTimer,
-    handlerFunction: function(m){jQuery('#statusbox').append("\n" + m.getChatString())},
-
+    handlerFunction: handleMessage
     });
-
     mq.start();
-    mq.mock({type: "join", player: "Dar"})
-    mq.mock({type: "chat", player: "Dar", string: "WTF! This is awesome!!!"})
-    mq.mock({type: "resolve", player: "Dar", testinput: "(f 3)", testoutput: "9"})
-    mq.mock({type: "test", player: "Dar", testresult: "Succeeded!"})
-    mq.mock({type: "leave", player: "Dar"})
 
     this.api = new GameApi({roomId: 'room-a', playerId: "app.html"});
+    this.api.join();
     this.api.chat("Hi from app.html");
 
 </script>
