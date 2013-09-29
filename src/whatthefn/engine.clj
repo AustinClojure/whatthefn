@@ -134,9 +134,6 @@
      :else false)))
 
 (defn remove-player-room [state room-id player-name]
-  (prn state)
-  (prn room-id)
-  (prn player-name)
   (let [rooms (:rooms state)
         room (rooms room-id)
         players (:players room)
@@ -168,10 +165,11 @@
 
 (defmethod proc-message :resolve-input [state msg]
   "we got an input to test"
-  (let [room (:room msg)
+  (let [room-id (:room msg)
+        room (get-in state [:rooms room-id])
         arg (:arg msg)
-        func (:function room)]
-    ;(subm/submit-value-engine arg (:body (get-current-function state room)) (partial send-fn-resolve-result room arg))
+        func (:current-func room)]
+                                        ;(subm/submit-value-engine arg (:body (get-current-function state room)) (partial send-fn-resolve-result room arg))
     (fxns/test-fun (:id func) arg (partial send-fn-resolve-result room arg))
     state))
 
