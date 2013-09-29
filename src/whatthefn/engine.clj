@@ -134,7 +134,7 @@
   (let [game-state (get-room-state state room-id)]
     (cond
      (and (= game-state :round-playing) (= (num-players state room-id) 0)) (game-ends state room-id)
-     (everyone-won? state room-id) (game-ends state room-id)
+     (and (= game-state :round-playing) ( everyone-won? state room-id)) (game-ends state room-id)
      :else state)))
 
 (defn remove-player-room [state room-id player-name]
