@@ -242,6 +242,7 @@
         roomId: 'room-a',
         tickFunction: myTimer,
         handlerFunction: function(m){jQuery('#statusbox').append("\n" + m.getChatString())},
+
         });
         
         mq.start();
