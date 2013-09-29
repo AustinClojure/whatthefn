@@ -92,7 +92,6 @@
     ["what's the opposite of gestalt?" :numeric sum-prime-factors "third function" #{7 9 8 24 12 30}]
     ["a matter of fact" :numeric factorial "4th function" #{2 5 3}]
     ["under the bridge" :numeric #(count (str %)) "5th function" #{2345 2 22 213092310}]
-    ["singular primes" :numeric #(reduce * (prime-factors %)) "6th function" #{3 2 4 6}]
     ["what the fn!" :numeric our-name "7th function" #{0 1 2 3 4 5 6 7 8 9 10 11 12}]
     ["follow the 1 through the trail!!!" :numeric follow-the "8th function" #{1 99 200 700}]
     ["prime?" :numeric prime? "9th function" #{1 2 16 7 23 8}]
