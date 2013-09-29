@@ -150,7 +150,7 @@
         players (:players room)]
     (if (and (not (player-in-room? state room-id player-name)) (< (count players) 4))
       (let [player-added-state (update-in state [:rooms room-id :players] #(conj % player-name))]
-        (check-game-starts state room-id))
+        (check-game-starts player-added-state room-id))
       state)))
 
 (defn player-won [state room-id player]
