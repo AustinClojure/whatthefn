@@ -114,6 +114,7 @@
     function-added))
 
 (defn game-starts [state room-id]
+  (prn "game starts!")
   (send-round-begins room-id (build-room-data state room-id))
   (assoc-in state [:rooms room-id :state] :round-playing))
 
@@ -124,6 +125,7 @@
      :else state)))
 
 (defn game-ends [state room-id]
+  (prn "game ends!")
   (send-round-ends room-id)
   (reset-round state room-id)
   (check-game-starts state room-id))
@@ -156,9 +158,7 @@
   (prn room-id)
   (prn player)
   (let [new-room (update-in state [:rooms room-id :winners] conj player)]
-    (if (everyone-won? new-room room-id)
-      (send-round-ends room-id)
-      new-room)))
+    (check-game-ends new-room room-id)))
 
 ;;message processing
 
