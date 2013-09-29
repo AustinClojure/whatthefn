@@ -41,7 +41,7 @@
 ;;state util
 
 (defn get-game-state [state room-id]
-  (get-in state [:rooms room-id :]))
+  (get-in state [:rooms room-id :state]))
 
 (defn get-current-function [state room-id]
   (let [rooms (:rooms state)
@@ -95,18 +95,31 @@
 (defn get-channel [state room-id]
   (get-in state [:rooms room-id :channel]))
 
+(defn get-room-state [state room-id]
+  (get-in state [:rooms room-id :state]))
 ;;state updates(engine logic)
 
+(defn game-starts [state room-id]
+  (send-round-begins room-id (build-room-data state room-id))
+  (assoc-in state [:rooms room-id :state] :round-playing))
+
 (defn check-game-starts [state room-id]
-  (let [game-state ]))
+  (let [game-state (get-room-state state room-id)]
+    (cond
+     (= game-state :waiting-for-players) (> (num-players state room-id) 0)
+     :else false)))
+
+(defn check-game-ends [state room-id]
+  (let [game-state (get-room-state state room-id)]
+    (cond
+     (and (= game-state :round-playing) (= (num-players state room-id) 0)) true
+     (everyone-won? state room-id) true
+     :else false)))
 
 (defn remove-player-room [state room-id player-name]
   (let [rooms (:rooms state)
         room (rooms room-id)
         players (:players room)]
-    (prn (disj players player-name))
-    (prn room-id)
-    (prn room)
     (assoc-in state [:rooms room-id :players] (disj players player-name))))
 
 (defn add-player-room [state room-id player-name]
@@ -114,7 +127,9 @@
         room (rooms room-id)
         players (:players room)]
     (if (and (not (player-in-room? state room-id player-name)) (< (count players) 4))
-      (update-in state [:rooms room-id :players] #(conj % player-name))
+      (let [player-added-state (update-in state [:rooms room-id :players] #(conj % player-name))]
+        (if (check-game-starts player-added-state room-id)
+          (game-starts state room-id)))
       state)))
 
 (defn refresh-function [state room-id]
