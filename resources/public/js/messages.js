@@ -57,7 +57,7 @@
         return new TestMessage(attrs, options);
       } else if (attrs.type == 'resolve-input') {
         return new ResolveMessage(attrs, options);
-      } else if (attrs.type == 'join') {
+      } else if (attrs.type == 'player-in-room') {
         return new JoinMessage(attrs, options);
       } else if (attrs.type == 'leave') {
         return new LeaveMessage(attrs, options);
