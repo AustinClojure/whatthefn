@@ -1,5 +1,6 @@
 (ns whatthefn.auth
-  (:require [ring.util.response :as response]))
+  (:require [ring.util.response :as response]
+            [whatthefn.error :as err]))
 
 ;;----------------------------------------
 
@@ -10,7 +11,7 @@
   (fn [req]
     (if (logged-in? req)
       (handler req)
-      {:status 401 :body "NOT AUTHENTICATED"})))
+      (err/error-page 401 "Not Authenticated"))))
 
 ;; ----------------------------------------
 (defonce user-store (atom {}))
