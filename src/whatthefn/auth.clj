@@ -1,5 +1,6 @@
 (ns whatthefn.auth
-  (:require [ring.util.response :as response]))
+  (:require [ring.util.response :as response]
+            [whatthefn.error :as err]))
 
 ;;----------------------------------------
 
@@ -10,7 +11,7 @@
   (fn [req]
     (if (logged-in? req)
       (handler req)
-      {:status 401 :body "NOT AUTHENTICATED"})))
+      (err/error-page 401 "Not Authenticated"))))
 
 ;; ----------------------------------------
 (defonce user-store (atom {}))
@@ -41,6 +42,24 @@
     :session {}))
 
 
+
+(defn validate-new-user [username password]
+  (cond
+   (not (<= 3 (count username) 16))
+   "Username must be between 3 and 16 characters"
+
+   (not (re-matches #"[a-zA-Z0-9]+" username))
+   "Username must contain letters and digits only."
+
+   (< (count password) 6)
+   "Passwords should be at least 6 characters."
+
+   :else
+   nil))
+
+
 (defn register [req username password]
-  (add-user-password username password)
-  (login req username password))
+  (if-let [error-response (validate-new-user username password)]
+    (err/error-page 400 error-response)
+    (do (add-user-password username password)
+        (login req username password))))
