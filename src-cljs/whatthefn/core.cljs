@@ -2,7 +2,8 @@
   (:require [ajax.core :as ajax]
             [dommy.core :as dommy]
             [clojure.string :as string]
-            [whatthefn.repl :as repl])
+            [whatthefn.repl :as repl]
+            [whatthefn.chat :as chat])  
   (:use-macros [dommy.macros :only [sel sel1]]))
 
 ;; ----------------------------------------
@@ -28,4 +29,5 @@
   (.log js/console "starting")
   (-> (sel1 :#submitbutton)
       (dommy/listen! :click submit-clicked))
-  (repl/init-repl))
+  (repl/init-repl)
+  (chat/init-chat))
