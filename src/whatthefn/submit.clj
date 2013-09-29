@@ -13,17 +13,22 @@
 (defn read-one-edn [reader]
   (clojure.edn/read {:eof nil} reader))
 
-(defn read-one [reader]
+(defn read-one-clj [reader]
   (binding [*read-eval* false]
     (read reader false nil)))
 
+
+(defn clj-seq [reader]
+  (when-let [next-val (read-one-clj reader)]
+    (cons next-val (clj-seq reader))))
+
 (defn edn-seq [reader]
-  (when-let [next-val (read-one reader)]
+  (when-let [next-val (read-one-edn reader)]
     (cons next-val (edn-seq reader))))
 
 
 (defn eval-code [sandbox code]
-  (let [forms (edn-seq (str-reader code))
+  (let [forms (clj-seq (str-reader code))
         results (map sandbox forms)
         result-text (clojure.string/join "\n" (map pr-str results))]
     result-text))
