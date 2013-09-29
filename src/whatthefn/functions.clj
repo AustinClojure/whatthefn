@@ -70,7 +70,9 @@
     ["prime?" :numeric prime? "9th function" #{1 2 16 7 23 8}]
     ["the even part" :numeric-collection even-only "10th function" #{#{1 2 3 4} #{3 4 5 19 20 1}}]
     ["stop yelling" :string clojure.string/upper-case "for the lulz" #{"why oh why" "wHY oh W" "ssacc1"}]
-    ["try a sentence! how verbose are you?" :string #(clojure.string/split % #"\ ") "for the lols" #{"why oh why" "why why" "why"}]})
+    ["try a sentence! how verbose are you?" :string #(clojure.string/split % #"\ ") "for the lols" #{"why oh why" "why why" "why"}]
+    ["all together" :numeric-collection #(reduce + %) "add it up" #{#{2 3} #{1 3 5}}]
+    ["how many are under ten?" :numeric-collection #(clojure.set/difference (range 10) %)]})
 
 (defn plus2 [n]
   (+ n 2))
