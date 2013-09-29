@@ -44,9 +44,7 @@
   (get-in state [:rooms room-id :state]))
 
 (defn get-current-function [state room-id]
-  (prn room-id)
-  (prn (:rooms state))
-  (prn ((:rooms state) room-id))
+  (prn "get-current-function" state)
   (let [rooms (:rooms state)
         room (rooms room-id)]
     (:current-func room)))
@@ -158,7 +156,6 @@
 
 (defn player-won [state room-id player]
   (prn "player won!!")
-  (prn state)
   (prn room-id)
   (prn player)
   (let [new-room (update-in state [:rooms room-id :winners] conj player)]
@@ -184,7 +181,8 @@
   "we got a function to grade"
   (let [f (:function msg)
         room (:room msg)]
-      (subm/submit-fn-engine f (:body (get-current-function state room)) (partial send-message-self (get-channel state room)) msg)))
+    (subm/submit-fn-engine f (:body (get-current-function state room)) (partial send-message-self (get-channel state room)) msg)
+    state))
 
 (defmethod proc-message :function-eval-result [state cb]
   "we got our own message about a function grade back"
