@@ -170,7 +170,7 @@
         arg (:arg msg)
         func (:current-func room)]
                                         ;(subm/submit-value-engine arg (:body (get-current-function state room)) (partial send-fn-resolve-result room arg))
-    (fxns/test-fun (:id func) arg (partial send-fn-resolve-result room arg))
+    (fxns/test-fun (:id func) arg (partial send-fn-resolve-result room-id arg))
     state))
 
 (defmethod proc-message :test-solution [state msg]
