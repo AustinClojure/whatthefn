@@ -31,9 +31,9 @@
             </form>
           </span><!--/.hidden-phone-->
           <span class="visible-phone">
-            <form class="navbar-form">
-              <input class="span2" type="text" placeholder="User Name">
-              <input class="span2" type="password" placeholder="Password">
+            <form action="/login" method="post" class="navbar-form">
+              <input name="username" class="span2" type="text" placeholder="User Name">
+              <input name="password" class="span2" type="password" placeholder="Password">
               <button type="submit" class="btn "><i class="icon-user"></i> Sign In</button>
             </form>
           </span>
@@ -61,10 +61,10 @@
                   <p class="lead">Score points by solving problems and beating the clock!</p>
                 </div><!--/.span9-->
                 <div class="span4">
-                  <form class="form-signin">
-                    <input type="text" class="input-block-level" autofocus placeholder="Create a user name">
-                    <input type="text" class="input-block-level" placeholder="Your email address">
-                    <input type="password" class="input-block-level" placeholder="Create a password">
+                  <form action="/register" method="post" class="form-signin">
+                    <input name="username" type="text" class="input-block-level" autofocus placeholder="Create a user name">
+                    <!-- <input name="email" type="text" class="input-block-level" placeholder="Your email address"> -->
+                    <input name="password" type="password" class="input-block-level" placeholder="Create a password">
                     <p>Use seven characters, at least one number, and at least one lowercase letter.</p>
                     <button class="btn btn-large btn-success"
                             type="submit">Sign up for WT<span class="fnlogo">&#131</span></button>

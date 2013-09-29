@@ -23,9 +23,18 @@
   (response/file-response file {:root "resources/public"}))
 
 (defroutes no-auth-routes
-  (GET "/" [] (static-file "/index.html"))
-  (POST "/login" [username password :as req] (auth/login req username password))
-  (POST "/logout" [] (auth/logout))
+  (GET "/" req
+       (if (auth/logged-in? req)
+         (response/redirect "/app")
+         (static-file "/index.html")))
+
+  (POST "/login" [username password :as req]
+        (auth/login req username password))
+  (POST "/logout" []
+        (auth/logout))
+  (POST "/register" [username password :as req]
+        (auth/register req username password))
+
   (route/resources "/")
   (GET "/session" [:as req] {:body (pr-str (:session req))}))
 
