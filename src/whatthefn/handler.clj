@@ -23,9 +23,18 @@
   (response/file-response file {:root "resources/public"}))
 
 (defroutes no-auth-routes
-  (GET "/" [] (static-file "/index.html"))
-  (POST "/login" [username password :as req] (auth/login req username password))
-  (POST "/logout" [] (auth/logout))
+  (GET "/" req
+       (if (auth/logged-in? req)
+         (response/redirect "/app")
+         (static-file "/index.html")))
+
+  (POST "/login" [username password :as req]
+        (auth/login req username password))
+  (POST "/logout" []
+        (auth/logout))
+  (POST "/register" [username password :as req]
+        (auth/register req username password))
+
   (route/resources "/")
   (GET "/session" [:as req] {:body (pr-str (:session req))}))
 
@@ -52,8 +61,10 @@
   no-auth-routes
   (auth/wrap-require-user auth-routes))
 
+(defonce session-atom (atom {}))
+(defonce session (mem/memory-store session-atom))
+
 (def app
   (-> app-routes
       (edn-params/wrap-edn-params)
-      (handler/site
-       {:store (mem/memory-store)})))
+      (handler/site {:session {:store session}})))
