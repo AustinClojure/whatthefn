@@ -26,7 +26,7 @@ function handleMessage(msg) {
 
   // create first editor
   var editor = ace.edit("editor");
-  editor.setTheme("ace/theme/twilight");
+  editor.setTheme("ace/theme/cobalt");
   editor.session.setMode("ace/mode/clojure");
   editor.setReadOnly(false);
 
