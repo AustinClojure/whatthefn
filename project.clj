@@ -5,6 +5,7 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [compojure "1.1.5"]
 
+                 [hiccup "1.0.4"]
                  [ring-edn "0.1.0"]
                  [clojail "1.0.6"]
                  [cheshire "5.2.0"]
@@ -15,7 +16,7 @@
                  [cljs-ajax "0.2.0"]
                  [prismatic/dommy "0.1.2"]]
 
-  :plugins [[lein-ring "0.8.5"]
+  :plugins [[lein-ring "0.8.7"]
             [lein-cljsbuild "0.3.3"]]
 
   :hooks [leiningen.cljsbuild]
@@ -25,6 +26,7 @@
                                    :pretty-print true}}]}
 
   :ring {:handler whatthefn.handler/app
+         :init    whatthefn.startup/server-ready
          :nrepl {:start? true
                  :port 3030}}
 
