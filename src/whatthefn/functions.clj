@@ -1,4 +1,6 @@
-(ns whatthefn.functions)
+(ns whatthefn.functions
+  (:require [clojure.edn]
+            [clojure.pprint]))
 
 (defn fib [n]
   (cond
@@ -76,6 +78,13 @@
        (* b n)
        c)))
 
+;; what a hack :)
+(defn base-b [b]
+  (fn [n]
+    (when (>= n 0)
+      (clojure.edn/read-string (clojure.pprint/write (int n) :base b :stream nil)))))
+
+
 (def function-bases
   #{
     ["a friend of lucas" :numeric fib "our first function" #{2 5 10}]
@@ -101,6 +110,16 @@
     ["Quadratic 3" :numeral (quadratic -9 1 1) "a simple quadratic" #{-10 -5 0 5 10 20 100}]
     ["Quadratic 4" :numeral (quadratic 101 47 17) "a simple quadratic" #{-10 -5 0 5 10 20 100}]
     ["Quadratic 5" :numeral (quadratic 90 2 10) "a simple quadratic" #{-10 -5 0 5 10 20 100}]
+
+    ["All your base" :numeral (base-b 2) "positive integers only" #{1 10 100 1000 10000 100000 777 888 999}]
+    ["All your base" :numeral (base-b 3) "positive integers only" #{1 10 100 1000 10000 100000 777 888 999}]
+    ["All your base" :numeral (base-b 4) "positive integers only" #{1 10 100 1000 10000 100000 777 888 999}]
+    ["All your base" :numeral (base-b 5) "positive integers only" #{1 10 100 1000 10000 100000 777 888 999}]
+    ["All your base" :numeral (base-b 6) "positive integers only" #{1 10 100 1000 10000 100000 777 888 999}]
+    ["All your base" :numeral (base-b 7) "positive integers only" #{1 10 100 1000 10000 100000 777 888 999}]
+    ["All your base" :numeral (base-b 8) "positive integers only" #{1 10 100 1000 10000 100000 777 888 999}]
+    ["All your base" :numeral (base-b 9) "positive integers only" #{1 10 100 1000 10000 100000 777 888 999}]
+    ["I know you" :numeral identity "like only I can." #{-10 -5 0 100 707}]
     })
 
 (defn plus2 [n]
