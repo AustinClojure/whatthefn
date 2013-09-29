@@ -1,7 +1,8 @@
 (ns whatthefn.gameapi
-  (:require [clojure.edn])
+  (:require [clojure.edn]
+            [whatthefn.engine :as engine])
   (:use [whatthefn.messages :only [new-message!]]
-        [whatthefn.events :only [write-to-game-channel!]]))
+        [whatthefn.events :only [write-to-game-channel! assert-engine-on-room]]))
 
 (defn username
   [req]
@@ -58,6 +59,7 @@
 (defn handler
   [req]
   (let [u (username req)]
+    (assert-engine-on-room (:room-id (:params req)) engine/start-engine)
     (case (:type (:params req))
       "chat" (chat (assoc (:params req) :username u))
       "resolve-input" (resolve-input (assoc  (:params req) :username u))
