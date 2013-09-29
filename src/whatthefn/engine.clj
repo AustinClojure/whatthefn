@@ -91,7 +91,10 @@
   (let [rooms (:rooms state)
         room (rooms room-id)
         players (:players room)]
-    (update-in state [:rooms room-id :players] (disj players player-name))))
+    (prn (disj players player-name))
+    (prn room-id)
+    (prn room)
+    (assoc-in state [:rooms room-id :players] (disj players player-name))))
 
 (defn add-player-room [state room-id player-name]
   (let [rooms (:rooms state)
@@ -158,10 +161,12 @@
     new-room))
 
 (defn start-engine []
-  (let [game-channel (evs/game-channel :the-room)
+  (let [room-id :the-room
+        game-channel (evs/game-channel room-id)
         state-transition-function proc-message
         initial-state (get-initial-state)
-        state-with-channel (assoc-in initial-state [:rooms :the-room :channel] game-channel)]
+        state-with-function (refresh-function initial-state room-id)
+        state-with-channel (assoc-in state-with-function [:rooms room-id :channel] game-channel)]
     (go
       (loop [game-state state-with-channel]
         (let [next-event (<!! game-channel)]
