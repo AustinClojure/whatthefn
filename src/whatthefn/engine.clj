@@ -202,7 +202,7 @@
   (let [room-id (:room msg)
         player-name (:player msg)
         new-room (add-player-room state room-id player-name)]
-    (send-player-in-room room-id player-name (player-in-room? state room-id player-name))
+    (send-player-in-room room-id player-name (player-in-room? new-room room-id player-name))
     new-room))
 
 (defmethod proc-message :player-left [state msg]
