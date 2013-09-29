@@ -36,7 +36,7 @@
 ;;self messages
 
 (defn send-message-self [channel message]
-  (>!! channel message))
+  (.start (Thread. (>!! channel message))))
 
 ;;state util
 
