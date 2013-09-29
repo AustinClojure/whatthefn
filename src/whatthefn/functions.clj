@@ -68,7 +68,7 @@
     ["what the fn!" :numeric our-name "7th function" #{0 1 2 3 4 5 6 7 8 9 10 11 12}]
     ["follow the 1 through the trail!!!" :numeric follow-the #{1 99 200 700}]
     ["prime?" :numeric prime? #{1 2 16 7 23 8}]
-    ["the even part" :numeric-collection #{#{1 2 3 4} #{3 4 5 19 20 1}}]})
+    ["the even part" :numeric-collection even-only #{#{1 2 3 4} #{3 4 5 19 20 1}}]})
 
 (defn plus2 [n]
   (+ n 2))
