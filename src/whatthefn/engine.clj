@@ -11,7 +11,7 @@
   {:name name :current-func nil :seen-functions '() :players #{} :state :waiting-for-players :winners #{} :channel nil})
 
 (defn get-initial-state []
-  {:rooms {:the-room (new-room :the-room)}})
+  {:rooms {"the-room" (new-room "the-room")}})
 
 ;;outgoing messages
 
@@ -41,7 +41,7 @@
 ;;state util
 
 (defn get-game-state [state room-id]
-  (get-in state [:rooms room-id :]))
+  (get-in state [:rooms room-id :state]))
 
 (defn get-current-function [state room-id]
   (let [rooms (:rooms state)
@@ -95,38 +95,63 @@
 (defn get-channel [state room-id]
   (get-in state [:rooms room-id :channel]))
 
+(defn get-room-state [state room-id]
+  (get-in state [:rooms room-id :state]))
+
 ;;state updates(engine logic)
 
+(defn clear-winners [state room-id]
+  (assoc-in state [:rooms room-id :winners] #{}))
+
+(defn refresh-function [state room-id]
+  (update-in state [:rooms room-id :current-func] fxns/get-next-function))
+
+(defn reset-round [state room-id]
+  (let [winners-cleared (clear-winners state room-id)
+        function-added (refresh-function winners-cleared room-id)
+        state-reset (assoc-in function-added [:rooms room-id :state] :waiting-for-players)]
+    function-added))
+
+(defn game-starts [state room-id]
+  (send-round-begins room-id (build-room-data state room-id))
+  (assoc-in state [:rooms room-id :state] :round-playing))
+
+(defn game-ends [state room-id]
+  (send-round-ends room-id)
+  (reset-round state room-id))
+
 (defn check-game-starts [state room-id]
-  (let [game-state ]))
+  (let [game-state (get-room-state state room-id)]
+    (cond
+     (= game-state :waiting-for-players) (> (num-players state room-id) 0)
+     :else false)))
+
+(defn check-game-ends [state room-id]
+  (let [game-state (get-room-state state room-id)]
+    (cond
+     (and (= game-state :round-playing) (= (num-players state room-id) 0)) true
+     (everyone-won? state room-id) true
+     :else false)))
 
 (defn remove-player-room [state room-id player-name]
   (let [rooms (:rooms state)
         room (rooms room-id)
-        players (:players room)]
-    (prn (disj players player-name))
-    (prn room-id)
-    (prn room)
-    (assoc-in state [:rooms room-id :players] (disj players player-name))))
+        players (:players room)
+        removed-state (assoc-in state [:rooms room-id :players] (disj players player-name))]
+    (if (check-game-ends removed-state room-id)
+      (game-ends removed-state room-id)
+      removed-state)))
 
 (defn add-player-room [state room-id player-name]
   (let [rooms (:rooms state)
         room (rooms room-id)
         players (:players room)]
     (if (and (not (player-in-room? state room-id player-name)) (< (count players) 4))
-      (update-in state [:rooms room-id :players] #(conj % player-name))
+      (let [player-added-state (update-in state [:rooms room-id :players] #(conj % player-name))]
+        (if (check-game-starts player-added-state room-id)
+          (game-starts player-added-state room-id)
+          player-added-state))
       state)))
-
-(defn refresh-function [state room-id]
-  (update-in state [:rooms room-id :current-func] fxns/get-next-function))
-
-(defn clear-winners [state room-id]
-  (update-in state [:rooms room-id :winners] #{}))
-
-(defn reset-round [state room-id]
-  (let [winners-cleared (clear-winners state room-id)
-        function-added (refresh-function winners-cleared room-id)]
-    function-added))
 
 (defn player-won [state room-id player]
   (let [new-room (update-in state [:rooms room-id :winners] conj player)]
@@ -140,10 +165,11 @@
 
 (defmethod proc-message :resolve-input [state msg]
   "we got an input to test"
-  (let [room (:room msg)
+  (let [room-id (:room msg)
+        room (get-in state [:rooms room-id])
         arg (:arg msg)
-        func (:function room)]
-    ;(subm/submit-value-engine arg (:body (get-current-function state room)) (partial send-fn-resolve-result room arg))
+        func (:current-func room)]
+                                        ;(subm/submit-value-engine arg (:body (get-current-function state room)) (partial send-fn-resolve-result room arg))
     (fxns/test-fun (:id func) arg (partial send-fn-resolve-result room arg))
     state))
 
@@ -178,6 +204,9 @@
         new-room (remove-player-room state room-id player-name)]
     new-room))
 
+(defmethod proc-message :tick [state msg]
+  state)
+
 (defn start-engine []
   (let [room-id "the-room"
         game-channel (evs/game-channel room-id)
@@ -189,5 +218,6 @@
       (loop [game-state state-with-channel]
         (let [next-event (<!! game-channel)]
           (prn next-event)
+          (prn game-state)
           ;write broadcast message here
           (recur (state-transition-function game-state next-event)))))))
