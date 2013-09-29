@@ -10,8 +10,15 @@
 (defn str-reader [text]
   (java.io.PushbackReader. (java.io.StringReader. text)))
 
+(defn read-one-edn [reader]
+  (clojure.edn/read {:eof nil} reader))
+
+(defn read-one [reader]
+  (binding [*read-eval* false]
+    (read reader false nil)))
+
 (defn edn-seq [reader]
-  (when-let [next-val (clojure.edn/read {:eof nil} reader)]
+  (when-let [next-val (read-one reader)]
     (cons next-val (edn-seq reader))))
 
 
@@ -20,7 +27,6 @@
         results (map sandbox forms)
         result-text (clojure.string/join "\n" (map pr-str results))]
     result-text))
-
 
 
 (defn find-the-fn [sandbox]

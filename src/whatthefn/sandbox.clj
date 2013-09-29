@@ -19,7 +19,7 @@
         (testers/blacklist-objects (:object restricted))))
 
 (defn sandbox []
-  (clojail/sandbox (wtfn-tester)))
+  (clojail/sandbox (wtfn-tester) :timeout 1000))
 
 
 
