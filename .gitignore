@@ -8,3 +8,6 @@ pom.xml
 wtfn.js
 /bin
 .lein-*
+*~
+\#*
+.\#*
