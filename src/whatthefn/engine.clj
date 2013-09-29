@@ -101,14 +101,15 @@
 ;;state updates(engine logic)
 
 (defn clear-winners [state room-id]
-  (update-in state [:rooms room-id :winners] #{}))
+  (assoc-in state [:rooms room-id :winners] #{}))
 
 (defn refresh-function [state room-id]
   (update-in state [:rooms room-id :current-func] fxns/get-next-function))
 
 (defn reset-round [state room-id]
   (let [winners-cleared (clear-winners state room-id)
-        function-added (refresh-function winners-cleared room-id)]
+        function-added (refresh-function winners-cleared room-id)
+        state-reset (assoc-in function-added [:rooms room-id :state] :waiting-for-players)]
     function-added))
 
 (defn game-starts [state room-id]
@@ -151,7 +152,8 @@
     (if (and (not (player-in-room? state room-id player-name)) (< (count players) 4))
       (let [player-added-state (update-in state [:rooms room-id :players] #(conj % player-name))]
         (if (check-game-starts player-added-state room-id)
-          (game-starts player-added-state room-id)))
+          (game-starts player-added-state room-id)
+          (player-added-state)))
       state)))
 
 (defn player-won [state room-id player]
