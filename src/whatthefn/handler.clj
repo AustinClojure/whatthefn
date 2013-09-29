@@ -2,8 +2,6 @@
   (:use compojure.core)
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
-            [hiccup.page :as page]
-            [hiccup.element :as elem]
             [cheshire.core :as json]
             [ring.middleware.edn :as edn-params]
             [ring.middleware.session.memory :as mem]
@@ -19,12 +17,6 @@
 (defn edn-response [data]
   {:body (pr-str data)
    :headers {"Content-Type" "application/edn;charset=UTF-8"}})
-
-(defn layout [title & body]
-  (page/html5
-   [:head [:title title]]
-   [:body body]))
-
 
 (defn counter [req]
   (println (:session req))
@@ -46,6 +38,8 @@
   (GET "/submit-value" [value]
        (whatthefn.submit/submit-value value))
 
+
+
   (GET "/rooms/:room-id/messages" {{room-id :room-id since :since} :params}
        (comp json-response messages/get-messages))
   (POST "/rooms/:room-id/messages" {{room-id :room-id message :message} :params}
@@ -54,10 +48,10 @@
         (comp json-response gameapi/handler))
 
   (GET "/counter" [] counter)
+  (GET "/clear" [] {:session {} :body "OK"})
 
   (route/resources "/")
   (route/not-found "Not Found"))
-
 
 
 (def app
