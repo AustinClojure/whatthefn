@@ -3,6 +3,7 @@ function handleMessage(msg) {
   if (msg.get('type') === 'round-begins') {
     editor.setValue(msg.getEditorString());
   }
+  jQuery('#statusbox').scrollTop(jQuery('#statusbox').height());
 }
 
 // Much of this is from the Ace editor's scrollable demo
@@ -28,6 +29,8 @@ function handleMessage(msg) {
   var editor = ace.edit("editor");
   editor.setTheme("ace/theme/cobalt");
   editor.session.setMode("ace/mode/clojure");
+  editor.setFontSize(16);
+  
   editor.setReadOnly(false);
 
 
