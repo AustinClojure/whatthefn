@@ -192,6 +192,23 @@
   </div><!--/.modal-footer-->
 </div><!--/.modal-->
 
+      <div class="modal hide fade" id="RoundModal">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4>WT&#131; Round Complete:</h4>
+        </div><!--/.modal-header-->
+        <div class="modal-body">
+          <p id="Victor">PlayerX won the round!</p>
+
+          <p id="Solution">The archived solution is... </p>
+            
+          </p>
+        </div><!--modal-body-->
+        <div class="modal-footer">
+          <a href="#" class="btn btn-primary" data-dismiss="modal">Close</a>
+        </div><!--/.modal-footer-->
+      </div><!--/.modal-->
+
 <!-- FOOTER =========================================================================================== -->
 <footer>
   <div class="container-fluid">
@@ -254,5 +271,6 @@
 
 </body>
 
+<script> jQuery('#RoundModal').modal('show') </script>
 
 </html>
