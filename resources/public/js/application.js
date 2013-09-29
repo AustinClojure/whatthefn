@@ -1,3 +1,10 @@
+function handleMessage(msg) {
+  jQuery('#statusbox').append("\n" + msg.getChatString());
+  if (msg.get('type') === 'round-begins') {
+    editor.setValue(msg.getEditorString());
+  }
+}
+
 // Much of this is from the Ace editor's scrollable demo
 
   var $ = document.getElementById.bind(document);
@@ -126,17 +133,10 @@
     var mq = new MessageQueue({
     roomId: 'room-a',
     tickFunction: myTimer,
-    handlerFunction: function(m){jQuery('#statusbox').append("\n" + m.getChatString())},
-
+    handlerFunction: handleMessage
     });
 
     mq.start();
-    //mq.mock({type: "join", player: "Dar"})
-    //mq.mock({type: "chat", player: "Dar", string: "WTF! This is awesome!!!"})
-    // mq.mock({type: "resolve", player: "Dar", testinput: "(f 3)", testoutput: "9"})
-    //mq.mock({type: "test", player: "Dar", testresult: "Succeeded!"})
-    // mq.mock({type: "leave", player: "Dar"})
 
     this.api = new GameApi({roomId: 'room-a', playerId: "app.html"});
-    //this.api.chat("Hi from app.html");
     this.api.join();
