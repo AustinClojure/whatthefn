@@ -80,8 +80,8 @@
 (defn test-fun [id arg callback]
   (try
     (let [fun (:body (function-map id))]
-      (prn (fun arg))
-      (prn arg)
+      (prn "test-fun" (fun arg))
+      (prn "arg" arg)
       (callback (fun arg)))
     (catch Exception e
       (callback (.getMessage e)))))

@@ -36,6 +36,7 @@
 ;;self messages
 
 (defn send-message-self [channel message]
+  (prn "trying to send self:" message)
   (go #(>!! channel message)))
 
 ;;state util
@@ -44,7 +45,6 @@
   (get-in state [:rooms room-id :state]))
 
 (defn get-current-function [state room-id]
-  (prn "get-current-function" state)
   (let [rooms (:rooms state)
         room (rooms room-id)]
     (:current-func room)))
@@ -223,7 +223,7 @@
     (go
       (loop [game-state state-with-channel]
         (let [next-event (<!! game-channel)]
-          (prn next-event)
-          (prn game-state)
+          (prn "got event:" next-event)
+          (prn "current state:" game-state)
           ;write broadcast message here
           (recur (state-transition-function game-state next-event)))))))

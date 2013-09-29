@@ -97,7 +97,7 @@
          :result (test-the-fn sandbox (functions/function-impl our-func) (:tests our-func))}
         (callback {:type :function-eval-result :result false :message "the-fn not found" :orig orig})))
     (catch Exception e
-      (callback {:type :function-eval-result :result false :message (.getMessage e) :orig orig}))))
+      (callback {:type :function-eval-result :result false :message (str "got exception" (.getMessage e)) :orig orig}))))
 
 (defn submit-value-engine [value-str our-func callback]
   (prn value-str)
