@@ -130,8 +130,10 @@
 (defmethod proc-message :resolve-input [state msg]
   "we got an input to test"
   (let [room (:room msg)
-        arg (:arg msg)]
-    (subm/submit-value-engine arg (:body (get-current-function state room)) (partial send-fn-resolve-result room arg))
+        arg (:arg msg)
+        func (:function room)]
+    ;(subm/submit-value-engine arg (:body (get-current-function state room)) (partial send-fn-resolve-result room arg))
+    (fxns/test-fun (:id func) arg (partial send-fn-resolve-result room arg))
     state))
 
 (defmethod proc-message :test-solution [state msg]
@@ -166,7 +168,7 @@
     new-room))
 
 (defn start-engine []
-  (let [room-id :the-room
+  (let [room-id "the-room"
         game-channel (evs/game-channel room-id)
         state-transition-function proc-message
         initial-state (get-initial-state)
