@@ -1,7 +1,8 @@
 function handleMessage(msg) {
   jQuery('#statusbox').append("\n" + msg.getChatString());
   if (msg.get('type') === 'round-begins') {
-    editor.setValue(msg.getEditorString());
+    editor.setValue(msg.getEditorString(), 0);
+    editor.moveCursorTo(0, 0);
   }
   jQuery('#statusbox').scrollTop(jQuery('#statusbox').height());
 }

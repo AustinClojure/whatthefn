@@ -22,6 +22,8 @@
              ";====================================================\n" +
              ";    Function Type: " + this.get('round-data').type + "\n" +
              ";====================================================\n" +
+             ";    Run (the-fn some-value) from the chat to get hints!\n" +
+             ";====================================================\n" +
              "(defn the-fn\n" +
              "  [x]\n" +
              "  ; Put your solution here\n" +
@@ -37,13 +39,13 @@
 
   var ResolveMessage =  Message.extend({
     getChatString: function() {
-      return this.get('player') + ': ' + this.get('input') + '-> ' + this.get('output');
+      return this.get('player') + ' hinted : ' + this.get('input') + '-> ' + this.get('output');
     }
   });
 
   var TestMessage =  Message.extend({
     getChatString: function() {
-      return this.get('player') + ' s Submission: ' + this.get('testresult');
+      return this.get('player') + ' guessed ' + (this.get('result') ? "CORRECTLY" : "WRONG");
     }
   });
 
@@ -65,7 +67,7 @@
         return new ChatMessage(attrs, options);
       } else if (attrs.type == 'round-begins') {
         return new NewRoundMessage(attrs, options);
-      } else if (attrs.type == 'test') {
+      } else if (attrs.type == 'answer-solution') {
         return new TestMessage(attrs, options);
       } else if (attrs.type == 'resolve-input') {
         return new ResolveMessage(attrs, options);
