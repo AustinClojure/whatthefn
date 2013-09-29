@@ -1,4 +1,133 @@
+@import url("bootstrap.min.css");
+@import url("bootstrap-responsive.min.css");
 @import url("layout.css");
+
+.logo { text-shadow: 1px 1px 2px #D1D1E0;  }
+
+.fnlogo { font-style: italic; font-size: 1.25em;  }
+
+/* Carousel Customizations */
+
+.carousel {  margin-top: 0px; margin-bottom: 0px; } /*Navbar is approximately 42px */
+
+.carousel img { margin-left: auto; margin-right: auto;  }
+
+/* .carousel .container is used on the carousel caption */
+
+.carousel .container { position: relative;}
+
+.carousel .item { height: 500px; } /* use 500px height images */
+
+.carousel-caption {
+      background-color: transparent;
+
+      /*max-width: 724px;*/
+      padding: 0 0 5px 0;
+      margin-top: 250px;
+      margin-left: 25px;
+    }
+
+.carousel-caption .row .span8 {
+    margin-top: 150px;
+    }
+
+
+.carousel-caption h1, .carousel-caption .lead {
+      margin: 0;
+      line-height: 1.25;
+      color: #fff;
+      text-shadow: 0 1px 1px rgba(0,0,0,.4);
+    }
+
+.carousel-caption .btn {
+      margin-top: 10px;
+    }
+
+.carousel-control {
+    height: 80px;
+    margin-top: 0;
+    font-size: 120px;
+    text-shadow: 0 1px 1px rgba(0,0,0,.4);
+    background-color: transparent;
+    border: 0;
+    position: absolute;
+    top: 40%;
+    z-index: 10;
+}
+
+.carousel-control .right { right: 15px; left: auto; }
+
+.carousel-caption { width: 100%; }
+
+.item img { width: 100%; margin-top: 0px; margin-bottom: 200px;}
+
+/* SIGN-IN FORM
+   ---------------------------------------------- */
+
+.form-signin {
+        max-width: 300px;
+        /*padding: 19px 29px 29px;*/
+        margin: 0 0px 100px 0;
+        color: lightgray;
+       /* background-color: #fff;*/
+        background-color: transparent;
+        /*border: 1px solid #e5e5e5;*/
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+      .form-signin .form-signin-heading,
+      .form-signin .checkbox, 
+      .form-signin p {
+        margin-bottom: 10px;
+        color:  lightgray;
+      }
+      .form-signin input[type="text"],
+      .form-signin input[type="password"], 
+      .form-signin .btn{
+        font-size: 16px;
+        height: auto;
+        margin-bottom: 15px;
+        padding: 7px 9px;
+      }
+
+      .form-signin .btn {
+          font-size: 16px;
+          width: 100%;
+          margin-top: -5px;
+          margin-bottom: 5px;
+          
+          }
+
+/* MARKETING CONTENT
+-------------------------------------------------- */
+
+/* Pad the edges of the mobile views a bit */
+.marketing {
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-top: 20px;
+}
+
+/* Center align the text within the three columns below the carousel */
+.marketing .span4 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.marketing h2 {
+  font-weight: normal;
+}
+.marketing .span4 p {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.marketing .row. span4 {}
+
+.marketing .row .span4 img { width: 140px; height: 140px; }
 
 /* ACE EDITOR */
 #editor { position: relative !important;
@@ -44,7 +173,9 @@
  } 
 */
 
-#statusbox {  width: 100%; }
+#statusbox {  width: 100%; 
+              margin-bottom: -10px;
+           }
 
 /* REPL BOX */
 
@@ -58,4 +189,20 @@
          margin-right: -20px;
        }
 
-.row_under_editor { margin-top: -15px; }
+.row_under_editor { margin-top: 0px; }
+
+#chat_input_box { width: 100%; 
+                  margin-top: -10px;
+}
+
+/* Large desktop */
+@media (min-width: 1200px) { ... }
+ 
+/* Portrait tablet to landscape and desktop */
+@media (min-width: 768px) and (max-width: 979px) { ... }
+ 
+/* Landscape phone to portrait tablet */
+@media (max-width: 767px) { ... }
+ 
+/* Landscape phones and down */
+@media (max-width: 480px) { ... }
