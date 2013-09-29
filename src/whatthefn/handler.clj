@@ -18,10 +18,9 @@
   {:body (pr-str data)
    :headers {"Content-Type" "application/edn;charset=UTF-8"}})
 
-
-
 (defn static-file [file]
   (response/file-response file {:root "resources/public"}))
+
 (defroutes app-routes
   (GET "/" [] (static-file "/index.html"))
   (GET "/app" [] (static-file "/app.html") )
@@ -40,7 +39,11 @@
   (POST "/rooms/:room-id/events" {{room-id :room-id message :message} :params}
         (comp json-response gameapi/handler))
 
-  (GET "/clear" [] {:session {} :body "OK"})
+
+  (POST "/login" [username password :as req] (whatthefn.auth/login req username password))
+  (POST "/logout" [] (whatthefn.auth/logout))
+
+  (GET "/session" [:as req] {:body (pr-str (:session req))})
 
   (route/resources "/")
   (route/not-found "Not Found"))

@@ -27,20 +27,20 @@
                 <li><a href="#"><i class="icon-globe"></i> Collaboration</a></li>
                 <li><a href="#"><i class="icon-certificate"></i> Points & Karma</a></li>
               </ul>
-            </li>   
+            </li>
             <li><a href="#"><!--<i class="icon-info-sign icon-white">--></i> Users</a></li>
 <!--<li><a href="#"><i class="icon-info-sign icon-white"></i> About</a></li>       -->
 </ul>
 <span class="hidden-phone">
-  <form class="navbar-form pull-right">
-    <button type="submit" class="btn "><i class="icon-user"></i> Sign Out</button>
+  <form action="/logout" method="post" class="navbar-form pull-right">
+    <button type="submit" class="btn "><i class="icon-user"></i>Sign Out</button>
   </form>
 </span><!--/.hidden-phone-->
 <span class="visible-phone">
   <form class="navbar-form">
     <button type="submit" class="btn "><i class="icon-user"></i> Sign Out</button>
   </form>
-</span>          
+</span>
 </div><!--/.container-fluid-->
 </div><!--/.navbar-inner-->
 </div><!--/.navbar-->
@@ -48,17 +48,17 @@
 
 <!-- ACE EDITOR ====================================================================== -->
 
-<div class="container-fluid">      
+<div class="container-fluid">
   <div class="row-fluid">
     <div class="span9">
       <pre id="editor">;Write a function named the-fn which accepts one numeric argument and returns its square.</pre>
-    </div><!--/.span9-->   
+    </div><!--/.span9-->
 
     <!-- STATUS WINDOW ================================================================= -->
     <div class="span3">
       <textarea id="statusbox" rows="25" readonly>Game Status</textarea>
     </div><!--span3-->
-    
+
   </div><!-- /.row -->
 
   <!-- ROW UNDER EDITOR ================================================================================ -->
@@ -66,7 +66,7 @@
     <div class="row_under_editor span1">
       <button  id="submitbutton" type="button" class="btn btn-small btn-primary">Submit</button>
     </div><!--/.span1 **-->
-    
+
     <div class="row_under_editor span1 .hidden-phone">
       <div class="btn-group .hidden-phone">
         <button class="btn btn-small .hidden-phone">Theme</button>
@@ -117,19 +117,19 @@
     <div class="row_under_editor span3 pull-right">
       <div>
         <div class="form-inline">
-          <input id="chat_input_box" type="text" class="input-small" placeholder="chat..." >              
+          <input id="chat_input_box" type="text" class="input-small" placeholder="chat..." >
         </div>
       </div>
     </div><!--/.row-->
 
-    
+
 
     <!-- REPL =========================================================================== -->
   </div><!--/.row-fluid-->
 
   <div class="row-fluid">
-    <div class="span12">  
-      <textarea id="repl" rows="20"></textarea>  
+    <div class="span12">
+      <textarea id="repl" rows="20"></textarea>
     </div><!--/.span12-->
   </div><!--/.row-->
 </div><!-- /.container -->
@@ -149,7 +149,7 @@
 <div class="modal hide fade" id="TermsModal">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal">&times;</button>
-    <h4>WT&#131; Terms of Service:</h4>          
+    <h4>WT&#131; Terms of Service:</h4>
   </div><!--/.modal-header-->
   <div class="modal-body">
     <p>
@@ -180,7 +180,7 @@
 <div class="modal hide fade" id="PrivacyModal">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal">&times;</button>
-    <h4>WT&#131; Privacy Policy:</h4>          
+    <h4>WT&#131; Privacy Policy:</h4>
   </div><!--/.modal-header-->
   <div class="modal-body">
     <p>
@@ -215,20 +215,20 @@
           <li><a href="#">The Most Precious Resource</a></li>
           <li><a href="#">Apprenticeship</a></li>
           <li><a href="#">Learning with Instant Feedback</a></li>
-        </ul>          
+        </ul>
       </div><!--/.span4-->
     </div><!--/.row-->
     <div class="row-fluid">
       <div class="span12 footerbottom">
         <div class="span4">
-          <p class="left-align">&#169 2013 WhatTheFn.com 
+          <p class="left-align">&#169 2013 WhatTheFn.com
             <a href="#TermsModal" data-toggle="modal"> Terms </a> <a href="#PrivacyModal" data-toggle="modal"> Privacy </a>
           </p>
         </div>
-        <div class="span4">                  
+        <div class="span4">
           <span class="glyphicons" >
-            <p class="center-align" style="text-align: center">Icons: 
-              <a href="http://creativecommons.org/licenses/by/3.0/">cc-by</a> 
+            <p class="center-align" style="text-align: center">Icons:
+              <a href="http://creativecommons.org/licenses/by/3.0/">cc-by</a>
               <a href="http://glyphicons.com/license/">glyphicons.com</a>
             </p>
           </span>
@@ -249,12 +249,12 @@
       </div><!--/.row-->
     </div>
   </div><!--/.container-->
-</footer>   
+</footer>
 
 
 <!-- FROM THE ACE scrollable-page DEMO ============================================== -->
 <script>
-  
+
   var $ = document.getElementById.bind(document);
   var dom = require("ace/lib/dom");
   //add command to all new editor instaces
@@ -326,14 +326,14 @@
     }
     themes = [].concat(themes.bright, themes.dark)
     setTimeout(function(){ window.scrollTo(0,0) }, 10)
-    
+
     whatthefn.core.init()
 
     function myTimer(mymilliseconds) {
-    
 
-    var minutes = Math.max(0,Math.floor(mymilliseconds / 60000)); 
-    var seconds = Math.max(0,Math.floor((mymilliseconds - (60000 * Math.floor(minutes))) / 1000)); 
+
+    var minutes = Math.max(0,Math.floor(mymilliseconds / 60000));
+    var seconds = Math.max(0,Math.floor((mymilliseconds - (60000 * Math.floor(minutes))) / 1000));
 
     //console.log("myMillis: " + mymilliseconds + " Mins: " + minutes + " Seconds: " + seconds)
 
@@ -348,10 +348,10 @@
     else if (seconds > 0) { pseconds = "0" + String(seconds) }
     else { pseconds = "00" }
 
-    
+
 
     if (minutes > 1) {
-    $('clock').className="label pull-right btn-info";        
+    $('clock').className="label pull-right btn-info";
     $('clock').innerHTML="Time Remaining: " + pminutes + ":" + pseconds;
     }
     else if (minutes > 0) {
@@ -366,14 +366,14 @@
     else { $('clock').className="label pull-right btn-danger"; }
     $('clock').innerHTML="Time Remaining: " + pminutes + ":" + pseconds;
     }
-    else 
+    else
     {
     $('clock').className="label pull-right btn-inverse";
     $('clock').innerHTML="Time's Up! " + pminutes + ":" + pseconds;
     }
     } //myTimer
 
-    
+
 
     function updateClock(millisecondsRemaining) {
     }
@@ -384,7 +384,7 @@
     handlerFunction: function(m){jQuery('#statusbox').append("\n" + m.getChatString())},
 
     });
-    
+
     mq.start();
     mq.mock({type: "join", player: "Dar"})
     mq.mock({type: "chat", player: "Dar", string: "WTF! This is awesome!!!"})
@@ -394,7 +394,7 @@
 
     this.api = new GameApi({roomId: 'room-a', playerId: "app.html"});
     this.api.chat("Hi from app.html");
-    
+
 </script>
 
 </body>
