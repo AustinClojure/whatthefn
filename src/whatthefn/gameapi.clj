@@ -1,4 +1,5 @@
 (ns whatthefn.gameapi
+  (:require [clojure.edn])
   (:use [whatthefn.messages :only [new-message!]]
         [whatthefn.events :only [write-to-game-channel!]]))
 
@@ -14,7 +15,7 @@
   (write-to-game-channel! room-id
                           {:type :resolve-input
                            :player player
-                           :arg arg
+                           :arg (clojure.edn/read-string arg)
                            :room room-id}))
 
 (defn test-solution
