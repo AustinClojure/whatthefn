@@ -10,8 +10,8 @@
 (defn new-room [name]
   {:name name :current-func nil :seen-functions '() :players #{} :state :waiting-for-players :winners #{} :channel nil})
 
-(defn get-initial-state []
-  {:rooms {"the-room" (new-room "the-room")}})
+(defn get-initial-state [name]
+  {:rooms {name (new-room name)}})
 
 ;;outgoing messages
 
@@ -217,7 +217,7 @@
 (defn start-engine [room-id]
   (let [game-channel (evs/game-channel room-id)
         state-transition-function proc-message
-        initial-state (get-initial-state)
+        initial-state (get-initial-state room-id)
         state-with-function (refresh-function initial-state room-id)
         state-with-channel (assoc-in state-with-function [:rooms room-id :channel] game-channel)]
     (go
