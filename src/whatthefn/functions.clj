@@ -91,7 +91,8 @@
     ["stop yelling" :string clojure.string/upper-case "for the lulz" #{"why oh why" "wHY oh W" "ssacc1"}]
     ["try a sentence! how verbose are you?" :string #(clojure.string/split % #"\ ") "for the lols" #{"why oh why" "why why" "why"}]
     ["all together" :numeric-collection #(reduce + %) "add it up" #{#{2 3} #{1 3 5}}]
-    ["how many are under ten?" :numeric-collection #(clojure.set/difference (range 10) %)]
+    ["how many are under ten?" :numeric-collection #(clojure.set/difference (range 10) %) "none are!" #{#{1 2 3} #{2 11 20}}]
+    ["One...Two...Three....Three elements!" :numeric-collection count "no comment" #{#{1 2 3} #{7 1 0} #{2}}]
     ["An even-handed problem" :numeral even-digits "It's not odd at all." #{222 333 1234567890 -9876543210 50000}]
 
     ["Mirror Mirror" :numeral reverse-num "on the wall" #{-1020301 -45 0 1000 1234 90909}]
