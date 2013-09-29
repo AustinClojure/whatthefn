@@ -117,16 +117,16 @@
   (send-round-begins room-id (build-room-data state room-id))
   (assoc-in state [:rooms room-id :state] :round-playing))
 
-(defn game-ends [state room-id]
-  (send-round-ends room-id)
-  (reset-round state room-id)
-  (check-game-starts state room-id))
-
 (defn check-game-starts [state room-id]
   (let [game-state (get-room-state state room-id)]
     (cond
      (and (= game-state :waiting-for-players) (> (num-players state room-id) 0)) (game-starts state room-id)
      :else state)))
+
+(defn game-ends [state room-id]
+  (send-round-ends room-id)
+  (reset-round state room-id)
+  (check-game-starts state room-id))
 
 (defn check-game-ends [state room-id]
   (let [game-state (get-room-state state room-id)]
