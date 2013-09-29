@@ -4,9 +4,9 @@ function handleMessage(msg) {
     editor.setValue(msg.getEditorString(), 0);
     editor.moveCursorTo(0, 0);
   } else if (msg.get('type') === 'answer-solution' && msg.isRoundOver()) {
-    window.mq.stop();
-    jQuery('#Victor').text(msg.get('player') + " won the round!").appendTo('#RoundModal');
-    jQuery('#RoundModal').modal('show');
+    //window.mq.stop();
+    //jQuery('#Victor').text(msg.get('player') + " won the round!").appendTo('#RoundModal');
+    //jQuery('#RoundModal').modal('show');
   }
   jQuery('#statusbox').scrollTop(jQuery('#statusbox').height());
 }
