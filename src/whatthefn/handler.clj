@@ -18,27 +18,20 @@
   {:body (pr-str data)
    :headers {"Content-Type" "application/edn;charset=UTF-8"}})
 
-(defn counter [req]
-  (println (:session req))
-  (let [safe-inc (fnil inc 0)
-        new-val (safe-inc (get-in req [:session :counter]))]
-    {:body (str new-val)
-     :session (assoc (:session req)
-                :counter new-val)}))
 
+
+(defn static-file [file]
+  (response/file-response file {:root "resources/public"}))
 (defroutes app-routes
-  (GET "/" [] (response/redirect "/index.html"))
-  (GET "/app" [] (response/redirect "/app.html"))
+  (GET "/" [] (static-file "/index.html"))
+  (GET "/app" [] (static-file "/app.html") )
+
   (POST "/submit-fn" [code]
         (whatthefn.submit/submit-fn code))
   (POST "/submit-repl" [code :as req]
         (whatthefn.submit/submit-repl req code))
-  (GET "/sr" [code :as req]
-       (whatthefn.submit/submit-repl req code))
   (GET "/submit-value" [value]
        (whatthefn.submit/submit-value value))
-
-
 
   (GET "/rooms/:room-id/messages" {{room-id :room-id since :since} :params}
        (comp json-response messages/get-messages))
@@ -47,7 +40,6 @@
   (POST "/rooms/:room-id/events" {{room-id :room-id message :message} :params}
         (comp json-response gameapi/handler))
 
-  (GET "/counter" [] counter)
   (GET "/clear" [] {:session {} :body "OK"})
 
   (route/resources "/")
