@@ -4,7 +4,7 @@
 
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [compojure "1.1.5"]
-                 [hiccup "1.0.4"]
+
                  [ring-edn "0.1.0"]
                  [clojail "1.0.6"]
                  [cheshire "5.2.0"]
