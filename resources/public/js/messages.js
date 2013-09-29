@@ -17,8 +17,15 @@
     },
 
     getEditorString: function() {
-      return ";Function Name: " + this.get('round-data').name + "\n" +
-             ";Function Type: " + this.get('round-data').type + "\n";
+      return ";====================================================\n" +
+             ";    Function Name: " + this.get('round-data').name + "\n" +
+             ";====================================================\n" +
+             ";    Function Type: " + this.get('round-data').type + "\n" +
+             ";====================================================\n" +
+             "(defn the-fn\n" +
+             "  [x]\n" +
+             "  ; Put your solution here\n" +
+             ")";
     }
   });
 

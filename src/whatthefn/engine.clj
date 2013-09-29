@@ -18,8 +18,8 @@
 (defn send-player-in-room [room-id player-name status]
   (msgs/new-message! room-id {:type :player-in-room :room room-id :player player-name :in-room? status}))
 
-(defn send-fn-resolve-result [room-id input output]
-  (msgs/new-message! room-id {:type :resolve-input :input input :output output}))
+(defn send-fn-resolve-result [room-id player input output]
+  (msgs/new-message! room-id {:type :resolve-input :input input :output output :player player}))
 
 (defn send-fn-answer-result [room-id player-name result points]
   (msgs/new-message! room-id {:type :answer-solution :player player-name :room room-id :result result :points-awarded points}))
@@ -134,7 +134,7 @@
   (let [game-state (get-room-state state room-id)]
     (cond
      (and (= game-state :round-playing) (= (num-players state room-id) 0)) (game-ends state room-id)
-     (everyone-won? state room-id) (game-ends state room-id)
+     (and (= game-state :round-playing) ( everyone-won? state room-id)) (game-ends state room-id)
      :else state)))
 
 (defn remove-player-room [state room-id player-name]
@@ -167,11 +167,12 @@
 (defmethod proc-message :resolve-input [state msg]
   "we got an input to test"
   (let [room-id (:room msg)
+        player (:player msg)
         room (get-in state [:rooms room-id])
         arg (:arg msg)
         func (:current-func room)]
                                         ;(subm/submit-value-engine arg (:body (get-current-function state room)) (partial send-fn-resolve-result room arg))
-    (fxns/test-fun (:id func) arg (partial send-fn-resolve-result room-id arg))
+    (fxns/test-fun (:id func) arg (partial send-fn-resolve-result room-id player arg))
     state))
 
 (defmethod proc-message :test-solution [state msg]
