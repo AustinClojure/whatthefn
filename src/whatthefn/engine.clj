@@ -37,7 +37,7 @@
 
 (defn send-message-self [channel message]
   (prn "trying to send self:" message)
-  (go #(>!! channel message)))
+  (go (>!! channel message)))
 
 ;;state util
 
@@ -111,37 +111,38 @@
   (let [winners-cleared (clear-winners state room-id)
         function-added (refresh-function winners-cleared room-id)
         state-reset (assoc-in function-added [:rooms room-id :state] :waiting-for-players)]
-    function-added))
+    state-reset))
 
 (defn game-starts [state room-id]
+  (prn "game starts!")
   (send-round-begins room-id (build-room-data state room-id))
   (assoc-in state [:rooms room-id :state] :round-playing))
-
-(defn game-ends [state room-id]
-  (send-round-ends room-id)
-  (reset-round state room-id))
 
 (defn check-game-starts [state room-id]
   (let [game-state (get-room-state state room-id)]
     (cond
-     (= game-state :waiting-for-players) (> (num-players state room-id) 0)
-     :else false)))
+     (and (= game-state :waiting-for-players) (> (num-players state room-id) 0)) (game-starts state room-id)
+     :else state)))
+
+(defn game-ends [state room-id]
+  (prn "game ends!")
+  (send-round-ends room-id)
+  (let [reset-state (reset-round state room-id)]
+    (check-game-starts reset-state room-id)))
 
 (defn check-game-ends [state room-id]
   (let [game-state (get-room-state state room-id)]
     (cond
-     (and (= game-state :round-playing) (= (num-players state room-id) 0)) true
-     (everyone-won? state room-id) true
-     :else false)))
+     (and (= game-state :round-playing) (= (num-players state room-id) 0)) (game-ends state room-id)
+     (everyone-won? state room-id) (game-ends state room-id)
+     :else state)))
 
 (defn remove-player-room [state room-id player-name]
   (let [rooms (:rooms state)
         room (rooms room-id)
         players (:players room)
         removed-state (assoc-in state [:rooms room-id :players] (disj players player-name))]
-    (if (check-game-ends removed-state room-id)
-      (game-ends removed-state room-id)
-      removed-state)))
+    (check-game-ends removed-state room-id)))
 
 (defn add-player-room [state room-id player-name]
   (let [rooms (:rooms state)
@@ -149,9 +150,7 @@
         players (:players room)]
     (if (and (not (player-in-room? state room-id player-name)) (< (count players) 4))
       (let [player-added-state (update-in state [:rooms room-id :players] #(conj % player-name))]
-        (if (check-game-starts player-added-state room-id)
-          (game-starts player-added-state room-id)
-          player-added-state))
+        (check-game-starts player-added-state room-id))
       state)))
 
 (defn player-won [state room-id player]
@@ -159,9 +158,7 @@
   (prn room-id)
   (prn player)
   (let [new-room (update-in state [:rooms room-id :winners] conj player)]
-    (if (everyone-won? new-room room-id)
-      (send-round-ends room-id)
-      new-room)))
+    (check-game-ends new-room room-id)))
 
 ;;message processing
 
@@ -196,13 +193,13 @@
     (send-fn-answer-result room player res points-scored)
     (if (> points-scored 0)
       (player-won state room player)
-      (state))))
+      state)))
 
 (defmethod proc-message :player-join-attempt [state msg]
   (let [room-id (:room msg)
         player-name (:player msg)
         new-room (add-player-room state room-id player-name)]
-    (send-player-in-room room-id player-name (player-in-room? state room-id player-name))
+    (send-player-in-room room-id player-name (player-in-room? new-room room-id player-name))
     new-room))
 
 (defmethod proc-message :player-left [state msg]

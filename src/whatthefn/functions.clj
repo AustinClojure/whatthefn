@@ -41,13 +41,20 @@
   (let [shifted (+ alpha 64)]
     (char shifted)))
 
+(defn our-name [n]
+  (let [nm "what the fn!"]
+    (try (nth nm n)
+         (catch Exception e
+           nil))))
+
 (def function-bases
   #{["a friend of lucas" :numeral fib "our first function" #{2 5 10}]
     ["a prime problem" :numeral prime-factors "second function" #{7 9 24 12 30}]
     ["what's the opposite of gestalt?" :numeral sum-prime-factors "third function" #{7 9 8 24 12 30}]
     ["a matter of fact" :numeral factorial "4th function" #{2 5 3}]
     ["under the bridge" :numeral #(count (str %)) "5th function" #{2345 2 22 213092310}]
-    ["singular primes" :numeral #(reduce * (prime-factors %)) "6th function" #{3 2 4 6}]})
+    ["singular primes" :numeral #(reduce * (prime-factors %)) "6th function" #{3 2 4 6}]
+    ["what the fn!" :numeral our-name "7th function" #{0 1 2 3 4 5 6 7 8 9 10 11 12}]})
 
 (defn plus2 [n]
   (+ n 2))
