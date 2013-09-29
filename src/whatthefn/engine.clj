@@ -158,7 +158,7 @@
   (prn room-id)
   (prn player)
   (let [new-room (update-in state [:rooms room-id :winners] conj player)]
-    (check-game-ends new-room room-id)))
+    (game-ends new-room room-id)))
 
 ;;message processing
 
