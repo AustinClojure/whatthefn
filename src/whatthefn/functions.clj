@@ -53,7 +53,7 @@
 
 (defn prime? [n]
   (let [pf (prime-factors n)]
-    (> (count pf) 1)))
+    (and (= (count pf) 1) (not= n 1))))
 
 (defn even-only [n]
   (filter even? n))
@@ -67,7 +67,7 @@
     ["singular primes" :numeric #(reduce * (prime-factors %)) "6th function" #{3 2 4 6}]
     ["what the fn!" :numeric our-name "7th function" #{0 1 2 3 4 5 6 7 8 9 10 11 12}]
     ["follow the 1 through the trail!!!" :numeric follow-the #{1 99 200 700}]
-    ["prime?" :numeric prime? #{2 16 7 23 8}]
+    ["prime?" :numeric prime? #{1 2 16 7 23 8}]
     ["the even part" :numeric-collection #{#{1 2 3 4} #{3 4 5 19 20 1}}]})
 
 (defn plus2 [n]
