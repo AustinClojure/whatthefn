@@ -153,7 +153,7 @@
       (let [player-added-state (update-in state [:rooms room-id :players] #(conj % player-name))]
         (if (check-game-starts player-added-state room-id)
           (game-starts player-added-state room-id)
-          (player-added-state)))
+          player-added-state))
       state)))
 
 (defn player-won [state room-id player]
