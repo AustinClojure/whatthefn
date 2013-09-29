@@ -97,11 +97,16 @@
 
 (defn get-room-state [state room-id]
   (get-in state [:rooms room-id :state]))
+
 ;;state updates(engine logic)
 
 (defn game-starts [state room-id]
   (send-round-begins room-id (build-room-data state room-id))
   (assoc-in state [:rooms room-id :state] :round-playing))
+
+(defn game-ends [state room-id]
+  (send-round-ends room-id)
+  (reset-round))
 
 (defn check-game-starts [state room-id]
   (let [game-state (get-room-state state room-id)]
@@ -119,8 +124,11 @@
 (defn remove-player-room [state room-id player-name]
   (let [rooms (:rooms state)
         room (rooms room-id)
-        players (:players room)]
-    (assoc-in state [:rooms room-id :players] (disj players player-name))))
+        players (:players room)
+        removed-state (assoc-in state [:rooms room-id :players] (disj players player-name))]
+    (if (check-game-ends)
+      (game-ends removed-state)
+      removed-state)))
 
 (defn add-player-room [state room-id player-name]
   (let [rooms (:rooms state)
@@ -129,7 +137,7 @@
     (if (and (not (player-in-room? state room-id player-name)) (< (count players) 4))
       (let [player-added-state (update-in state [:rooms room-id :players] #(conj % player-name))]
         (if (check-game-starts player-added-state room-id)
-          (game-starts state room-id)))
+          (game-starts player-added-state room-id)))
       state)))
 
 (defn refresh-function [state room-id]
