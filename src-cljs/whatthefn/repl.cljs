@@ -7,9 +7,11 @@
 (def cursor-pos (atom 0))
 
 (defn update-cursor []
-  (reset! cursor-pos
-          (count (-> (sel1 :#repl)
-                     (dommy/value)))))
+  (let [repl (sel1 :#repl)]
+    (reset! cursor-pos
+            (count (dommy/value repl)))
+    (set! (.-scrollTop repl) (.-scrollHeight repl))))
+
 (defn repl-output [text]
   (let [repl (sel1 :#repl)]
     (dommy/set-value! repl
@@ -23,13 +25,6 @@
   (-> (sel1 :#repl)
       (dommy/value)
       (subs @cursor-pos)))
-
-
-(defn out-repl [resp]
-  (.log js/console "out-repl: " (pr-str (:result resp)))
-  (repl-output (:result resp)))
-
-
 
 (defn send-repl [fn-text]
   (ajax/POST "/submit-repl"
