@@ -40,10 +40,17 @@
 
 ;;state util
 
+(defn get-game-state [state room-id]
+  (get-in state [:rooms room-id :]))
+
 (defn get-current-function [state room-id]
   (let [rooms (:rooms state)
         room (rooms room-id)]
     (:current-func room)))
+
+(defn build-room-data [state room-id]
+  (let [f (get-current-function state room-id)]
+    {:name (:name f) :type (:type f) :description (:description f)}))
 
 (defn num-players [state room-id]
   "return the number of players in the room"
@@ -87,7 +94,11 @@
 
 (defn get-channel [state room-id]
   (get-in state [:rooms room-id :channel]))
+
 ;;state updates(engine logic)
+
+(defn check-game-starts [state room-id]
+  (let [game-state ]))
 
 (defn remove-player-room [state room-id player-name]
   (let [rooms (:rooms state)
