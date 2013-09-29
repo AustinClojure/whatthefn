@@ -180,10 +180,10 @@
         function myTimer(mymilliseconds) {
         
 
-        var minutes = Math.max(Math.floor(mymilliseconds / 60000)); 
+        var minutes = Math.max(0,Math.floor(mymilliseconds / 60000)); 
         var seconds = Math.max(0,Math.floor((mymilliseconds - (60000 * Math.floor(minutes))) / 1000)); 
 
-        console.log("myMillis: " + mymilliseconds + " Mins: " + minutes + " Seconds: " + seconds)
+        //console.log("myMillis: " + mymilliseconds + " Mins: " + minutes + " Seconds: " + seconds)
 
         var pminutes = "00";
         var pseconds = "00";
