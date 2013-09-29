@@ -46,6 +46,10 @@
   var TestMessage =  Message.extend({
     getChatString: function() {
       return this.get('player') + ' guessed ' + (this.get('result') ? "CORRECTLY" : "WRONG");
+    },
+
+    isRoundOver: function() {
+      return this.get('result');
     }
   });
 

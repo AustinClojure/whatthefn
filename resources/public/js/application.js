@@ -3,6 +3,11 @@ function handleMessage(msg) {
   if (msg.get('type') === 'round-begins') {
     editor.setValue(msg.getEditorString(), 0);
     editor.moveCursorTo(0, 0);
+  } else if (msg.get('type') === 'answer-solution' && msg.isRoundOver()) {
+    window.mq.stop();
+    jQuery('#RoundModal').empty();
+    jQuery('<p>').text(msg.get('player') + " won the round!").appendTo('#RoundModal');
+    jQuery('#RoundModal').modal('show');
   }
   jQuery('#statusbox').scrollTop(jQuery('#statusbox').height());
 }
@@ -134,13 +139,13 @@ function handleMessage(msg) {
     function updateClock(millisecondsRemaining) {
     }
 
-    var mq = new MessageQueue({
+    window.mq = new MessageQueue({
     roomId: 'room-a',
     tickFunction: myTimer,
     handlerFunction: handleMessage
     });
 
-    mq.start();
+    window.mq.start();
 
     this.api = new GameApi({roomId: 'room-a', playerId: "app.html"});
     this.api.join();
