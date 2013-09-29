@@ -5,7 +5,8 @@
 (def restricted {:symbol
                  '[use require ns in-ns future agent send send-off pmap pcalls]
                  :ns
-                 '[whatthefn compojure cheshire ring clojure.core.async clj-time]
+                 '[whatthefn compojure cheshire ring clojure.core.async clj-time
+                   clojure.edn hiccup clojure.pprint]
                  :package
                  []
                  :object
