@@ -93,11 +93,12 @@
           eval-result (eval-code sandbox code)
           the-fn (find-the-fn sandbox)]
       (if the-fn
-        {:type :function-eval-result
-         :result (test-the-fn sandbox (functions/function-impl our-func) (:tests our-func))}
+        (callback {:type :function-eval-result
+                   :result (test-the-fn sandbox (:body our-func) (:tests our-func))})
         (callback {:type :function-eval-result :result false :message "the-fn not found" :orig orig})))
     (catch Exception e
-      (callback {:type :function-eval-result :result false :message (.getMessage e) :orig orig}))))
+      (.printStackTrace e)
+      (callback {:type :function-eval-result :result false :message (str "got exception" (.getMessage e)) :orig orig}))))
 
 (defn submit-value-engine [value-str our-func callback]
   (prn value-str)

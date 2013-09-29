@@ -10,8 +10,8 @@
 (defn new-room [name]
   {:name name :current-func nil :seen-functions '() :players #{} :state :waiting-for-players :winners #{} :channel nil})
 
-(defn get-initial-state []
-  {:rooms {"the-room" (new-room "the-room")}})
+(defn get-initial-state [name]
+  {:rooms {name (new-room name)}})
 
 ;;outgoing messages
 
@@ -36,6 +36,7 @@
 ;;self messages
 
 (defn send-message-self [channel message]
+  (prn "trying to send self:" message)
   (go #(>!! channel message)))
 
 ;;state util
@@ -154,6 +155,9 @@
       state)))
 
 (defn player-won [state room-id player]
+  (prn "player won!!")
+  (prn room-id)
+  (prn player)
   (let [new-room (update-in state [:rooms room-id :winners] conj player)]
     (if (everyone-won? new-room room-id)
       (send-round-ends room-id)
@@ -177,7 +181,8 @@
   "we got a function to grade"
   (let [f (:function msg)
         room (:room msg)]
-    (subm/submit-fn-engine f (:body (get-current-function state room)) (partial send-message-self (get-channel state room)) msg)))
+    (subm/submit-fn-engine f (get-current-function state room) (partial send-message-self (get-channel state room)) msg)
+    state))
 
 (defmethod proc-message :function-eval-result [state cb]
   "we got our own message about a function grade back"
@@ -189,7 +194,9 @@
         res (:result cb)
         points-scored (get-score-value state room player res)]
     (send-fn-answer-result room player res points-scored)
-    (player-won state room player)))
+    (if (> points-scored 0)
+      (player-won state room player)
+      (state))))
 
 (defmethod proc-message :player-join-attempt [state msg]
   (let [room-id (:room msg)
@@ -210,13 +217,13 @@
 (defn start-engine [room-id]
   (let [game-channel (evs/game-channel room-id)
         state-transition-function proc-message
-        initial-state (get-initial-state)
+        initial-state (get-initial-state room-id)
         state-with-function (refresh-function initial-state room-id)
         state-with-channel (assoc-in state-with-function [:rooms room-id :channel] game-channel)]
     (go
       (loop [game-state state-with-channel]
         (let [next-event (<!! game-channel)]
-          (prn next-event)
-          (prn game-state)
+          (prn "got event:" next-event)
+          (prn "current state:" game-state)
           ;write broadcast message here
           (recur (state-transition-function game-state next-event)))))))

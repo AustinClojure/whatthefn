@@ -50,8 +50,6 @@
 
   (GET "/rooms/:room-id/messages" {{room-id :room-id since :since} :params}
        (comp json-response messages/get-messages))
-  (POST "/rooms/:room-id/messages" {{room-id :room-id message :message} :params}
-        (json-response (messages/new-message! room-id {:str message})))
   (POST "/rooms/:room-id/events" {{room-id :room-id message :message} :params}
         (comp json-response gameapi/handler))
 
