@@ -22,7 +22,7 @@
   (dosync
     (when-not (@game-channels game-id)
       (new-game! game-id)
-      ;(start-dummy-writer game-id)
+      (start-game-engine game-id)
       )))
 
 (defn game-channel
