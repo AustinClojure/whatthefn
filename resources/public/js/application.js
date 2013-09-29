@@ -5,8 +5,7 @@ function handleMessage(msg) {
     editor.moveCursorTo(0, 0);
   } else if (msg.get('type') === 'answer-solution' && msg.isRoundOver()) {
     window.mq.stop();
-    jQuery('#RoundModal').empty();
-    jQuery('<p>').text(msg.get('player') + " won the round!").appendTo('#RoundModal');
+    jQuery('#Victor').text(msg.get('player') + " won the round!").appendTo('#RoundModal');
     jQuery('#RoundModal').modal('show');
   }
   jQuery('#statusbox').scrollTop(jQuery('#statusbox').height());
