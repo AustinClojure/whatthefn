@@ -6,11 +6,19 @@
 </head>
 <body>
   <div id='app'>
-    <div class='chatroom'>
-      <div class='messagesLog'></div>
-      <textarea></textarea>
-      <button>Chat!</button>
+    <div class='game'>
+      <p>Room ID: <input type='text' class='room' value='abc'></input></p>
+      <p>Player Name: <input type='text' class='player' value='def'></input></p>
     </div>
+
+    <div class='buttons'>
+      <textarea></textarea>
+      <button class='join'>Join!</button>
+      <button class='chat'>Chat!</button>
+      <button class='resolve'>Resolve!</button>
+      <button class='test'>Test!</button>
+    </div>
+    <div class='messagesLog'></div>
   </div>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
@@ -38,62 +46,53 @@
         $('<p>').text(message.getChatString()).appendTo(this.$el);
       }, this);
     }
-  })
+  });
 
-  var ChatRoom = Backbone.Model.extend({
-    messagesPath: function() {
-      return "/rooms/" + this.get('id') + "/messages";
+  var GameView = Backbone.View.extend({
+    initialize: function() {
+      this.onChange();
     },
 
-    lastMessageId: function() {
-      if (this.get('messages').isEmpty()) {
-        return "";
-      } else {
-        return this.get('messages').last().get('id');
-      }
+    events: {
+      'change input': 'onChange'
     },
 
-    sendMessage: function(message) {
-      var api = new GameApi({
-        roomId: this.get('id')
+    onChange: function() {
+      this.model.set({
+        roomId: this.$('.room').val(),
+        playerId: this.$('.player').val()
       });
-      api.chat(message);
-    },
-
-    getMessages: function() {
-      if (this.get('messages').isEmpty()) {
-        this.pollForInitialMessages();
-      } else {
-        this.pollForAdditionalMessages();
-      }
-    },
-
-    poll: function(params) {
-      $.getJSON(this.messagesPath(), params, _.bind(this.addMessages, this));
-    },
-
-    pollForInitialMessages: function() {
-      this.poll({});
-    },
-
-    pollForAdditionalMessages: function() {
-      this.poll({since: this.lastMessageId()});
-    },
-
-    addMessages: function(messages) {
-      this.get('messages').add(messages);
     }
   });
 
-  var MessageSubmitter = Backbone.View.extend({
+  var ButtonsView = Backbone.View.extend({
     events: {
-      'click button': 'submitToChat'
+      'click .chat': 'chat',
+      'click .join': 'join',
+      'click .resolve': 'resolve',
+      'click .test': 'test'
     },
 
-    submitToChat: function() {
-      var message = this.$('textarea').val();
-      this.model.sendMessage(message);
+    chat: function() {
+      this.model.chat(this.pullVal());
+    },
+
+    join: function() {
+      //this.model.chat(this.pullVal());
+    },
+
+    resolve: function() {
+      this.model.resolveInput(this.pullVal());
+    },
+
+    test: function() {
+      this.model.testSolution(this.pullVal());
+    },
+
+    pullVal: function() {
+      var val = this.$('textarea').val();
       this.$('textarea').val('');
+      return val;
     }
   });
 
@@ -106,23 +105,22 @@
         el: this.$('.messagesLog')
       });
 
-      this.chatRoom = new ChatRoom({
-        id: 'room-a',
-        messages: this.messages
+      this.mq = new MessageQueue({
+        roomId: 'abc',
+        handlerFunction: _.bind(this.messages.add, this.messages)
+      });
+      this.mq.start();
+
+      this.api = new GameApi();
+      this.apiView = new GameView({
+        model: this.api,
+        el: this.$('.game')
       });
 
-      new MessageSubmitter({
-        model: this.chatRoom,
-        el: this.$('.chatroom')
+      this.buttonsView = new ButtonsView({
+        model: this.api,
+        el: this.$('.buttons')
       });
-
-      new MessageQueue({
-        roomId: 'room-a',
-        handlerFunction: _.bind(function(message) {
-          this.messages.add(message);
-          console.log(message.getChatString());
-        }, this)
-      }).start();
     }
   });
 

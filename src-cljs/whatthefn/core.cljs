@@ -1,15 +1,16 @@
 (ns whatthefn.core
   (:require [ajax.core :as ajax]
-            [dommy.core :as dommy])
+            [dommy.core :as dommy]
+            [clojure.string :as string]
+            [whatthefn.repl :as repl])
   (:use-macros [dommy.macros :only [sel sel1]]))
 
-(defn log-response [resp]
-  (.log js/console "RESP" (pr-str resp)))
-
+;; ----------------------------------------
 (defn out-field [resp]
-  (.log js/console "RESP!" (pr-str (:result resp)))
+  (.log js/console "out-field: " (pr-str (:result resp)))
   (-> (sel1 :#statusbox)
-      (dommy/append! (str "Result: " (pr-str (:result resp))))))
+      (dommy/append! (str "\nResult: " (pr-str (:result resp))))))
+
 
 (defn send-fn [fn-text]
   (ajax/POST "/submit-fn"
@@ -17,10 +18,14 @@
               :format :edn
               :handler out-field}))
 
+
 (defn submit-clicked []
   (send-fn (.getValue js/editor)))
+
+;; ----------------------------------------
 
 (defn ^:external init []
   (.log js/console "starting")
   (-> (sel1 :#submitbutton)
-      (dommy/listen! :click submit-clicked)))
+      (dommy/listen! :click submit-clicked))
+  (repl/init-repl))
