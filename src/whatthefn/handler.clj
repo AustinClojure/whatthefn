@@ -27,8 +27,8 @@
                 :counter new-val)}))
 
 (defroutes app-routes
-  (GET "/" [] (response/redirect "/app.html"))
-
+  (GET "/" [] (response/redirect "/index.html"))
+  (GET "/app" [] (response/redirect "/app.html"))
   (POST "/submit-fn" [code]
         (whatthefn.submit/submit-fn code))
   (POST "/submit-repl" [code :as req]

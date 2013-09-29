@@ -3,6 +3,8 @@
 
 body { margin-top: 43px; } /* Keep content from hiding under navbar */
 
+.navbar { background: #1b1b1b; }
+
 footer { background: #1b1b1b;
          padding: 20px 0;
          
@@ -12,7 +14,11 @@ footer .span4, footer .span8, footer .span12 {background-color: transparent; }
 
 footer p { color: #777; }
 
-.footerbottom p { text-align: left;
+.footerbottom p .left-align { text-align: left;
+                   padding-left: 10px;
+                 }
+
+.footerbottom p .center-align { text-align: center;
                    padding-left: 10px;
                  }
 
