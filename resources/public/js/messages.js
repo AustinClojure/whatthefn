@@ -85,7 +85,6 @@
     },
 
     callTickFunction: function() {
-      console.log(this.get('clock').millisecondsRemaining());
       this.get('tickFunction').call(null, this.get('clock').millisecondsRemaining());
     },
   });
