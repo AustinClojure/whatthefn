@@ -119,29 +119,28 @@
 
 (defn game-ends [state room-id]
   (send-round-ends room-id)
-  (reset-round state room-id))
+  (reset-round state room-id)
+  (check-game-starts state room-id))
 
 (defn check-game-starts [state room-id]
   (let [game-state (get-room-state state room-id)]
     (cond
-     (= game-state :waiting-for-players) (> (num-players state room-id) 0)
-     :else false)))
+     (and (= game-state :waiting-for-players) (> (num-players state room-id) 0)) (game-starts state room-id)
+     :else state)))
 
 (defn check-game-ends [state room-id]
   (let [game-state (get-room-state state room-id)]
     (cond
-     (and (= game-state :round-playing) (= (num-players state room-id) 0)) true
-     (everyone-won? state room-id) true
-     :else false)))
+     (and (= game-state :round-playing) (= (num-players state room-id) 0)) (game-ends state room-id)
+     (everyone-won? state room-id) (game-ends state room-id)
+     :else state)))
 
 (defn remove-player-room [state room-id player-name]
   (let [rooms (:rooms state)
         room (rooms room-id)
         players (:players room)
         removed-state (assoc-in state [:rooms room-id :players] (disj players player-name))]
-    (if (check-game-ends removed-state room-id)
-      (game-ends removed-state room-id)
-      removed-state)))
+    (check-game-ends removed-state room-id)))
 
 (defn add-player-room [state room-id player-name]
   (let [rooms (:rooms state)
@@ -149,9 +148,7 @@
         players (:players room)]
     (if (and (not (player-in-room? state room-id player-name)) (< (count players) 4))
       (let [player-added-state (update-in state [:rooms room-id :players] #(conj % player-name))]
-        (if (check-game-starts player-added-state room-id)
-          (game-starts player-added-state room-id)
-          player-added-state))
+        (check-game-starts state room-id))
       state)))
 
 (defn player-won [state room-id player]
