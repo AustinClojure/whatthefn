@@ -193,7 +193,7 @@
     (send-fn-answer-result room player res points-scored)
     (if (> points-scored 0)
       (player-won state room player)
-      (state))))
+      state)))
 
 (defmethod proc-message :player-join-attempt [state msg]
   (let [room-id (:room msg)
