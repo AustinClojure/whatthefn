@@ -126,17 +126,20 @@
 (defmulti proc-message #(:type %2))
 
 (defmethod proc-message :resolve-input [state msg]
+  "we got an input to test"
   (let [room (:room msg)
         arg (:arg msg)]
-    (subm/submit-value-engine arg (get-current-function state room) (partial send-fn-resolve-result room arg))
+    (subm/submit-value-engine arg (:body (get-current-function state room)) (partial send-fn-resolve-result room arg))
     state))
 
 (defmethod proc-message :test-solution [state msg]
+  "we got a function to grade"
   (let [f (:function msg)
         room (:room msg)]
-    (subm/submit-fn-engine f (get-current-function state room) (partial send-message-self (:channel state)) msg)))
+    (subm/submit-fn-engine f (:body (get-current-function state room)) (partial send-message-self (:channel state)) msg)))
 
 (defmethod proc-message :function-eval-result [state cb]
+  "we got our own message about a function grade back"
   (let [msg (:orig cb)
         f (:function msg)
         room (:room msg)

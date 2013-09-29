@@ -1,5 +1,6 @@
 (ns whatthefn.testfunctions)
 
+
 (def pj {:type :player-join-attempt :player "newbie" :room :the-room})
 
 (def pl {:type :player-left :player "newbie" :room :the-room})
@@ -12,9 +13,9 @@
 (def good-guess {:type :test-input
                  :room :the-room
                  :player "newbie"
-                 :function #(* % 2)})
+                 :function "(defn the-fn [n] (* n 2))"})
 
 (def bad-guess {:type :test-input
                 :room :the-room
                 :player "newbie"
-                :function #(+ % 2)})
+                :function "(defn the-fn [n] (+ n 2))"})

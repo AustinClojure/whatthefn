@@ -89,6 +89,9 @@
       (callback {:type :function-eval-result :result false :message (.getMessage e) :orig orig}))))
 
 (defn submit-value-engine [value-str our-func callback]
+  (prn value-str)
+  (prn our-func)
+  (prn callback)
   "get the output for a single input"
   (let [sandbox (sb/sandbox)]
     (sandbox '(def the-fn our-func))
