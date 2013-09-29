@@ -23,7 +23,7 @@
     },
 
     getSampleValue: function() {
-      if (this.get('round-data').type === 'numeric') {
+      if (this.get('round-data').type === 'numeric' || this.get('round-data').type === 'numeral') {
         return '77';
       } else if (this.get('round-data').type === 'string') {
         return '"my string"';
