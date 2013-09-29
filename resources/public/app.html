@@ -90,10 +90,15 @@
       </div><!--/.row-->
     </div><!-- /.container -->
 
+      
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/src/ace.js" type="text/javascript" charset="UTF-8"></script>
     <script src="js/wtfn.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.1/underscore-min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
+    <script src="js/gameapi.js"></script>
+    <script src="js/messages.js"></script>
 
     <!-- FROM THE ACE scrollable-page DEMO ============================================== -->
     <script>
@@ -172,26 +177,57 @@
         
         whatthefn.core.init()
 
-        function myTimer() {
+        function myTimer(mymilliseconds) {
+        
 
-        var d=new Date(); 
-        var t=d.toLocaleTimeString(); 
-        var s=d.getSeconds();
-        $('clock').innerHTML="Time Remaining: " + t;
+        var minutes = Math.max(Math.floor(mymilliseconds / 60000)); 
+        var seconds = Math.max(0,Math.floor((mymilliseconds - (60000 * Math.floor(minutes))) / 1000)); 
 
+        console.log("myMillis: " + mymilliseconds + " Mins: " + minutes + " Seconds: " + seconds)
 
-        if (s > 40) {
-        $('clock').className="label pull-right btn-info";
+        var pminutes = "00";
+        var pseconds = "00";
+
+        if (minutes > 9) { pminutes = String(minutes) }
+        else if (minutes > 0) { pminutes = "0" + String(minutes) }
+        else { pminutes = "00" }
+
+        if (seconds > 9) { pseconds = String(seconds) }
+        else if (seconds > 0) { pseconds = "0" + String(seconds) }
+        else { pseconds = "00" }
+
+        
+
+        if (minutes > 1) {
+        $('clock').className="label pull-right btn-info";        
+        $('clock').innerHTML="Time Remaining: " + pminutes + ":" + pseconds;
         }
-        else if (s > 20) {
-        $('clock').className="label pull-right btn-warning";
+        else if (minutes > 0) {
+        if (seconds == 58 || seconds == 56) { $('clock').className="label pull-right btn-info"; }
+        else { $('clock').className="label pull-right btn-warning";}
+        $('clock').innerHTML="Time Remaining: " + pminutes + ":" + pseconds;
         }
-        else {
-        $('clock').className="label pull-right btn-danger";
+        else if (seconds > 0) {
+        if (seconds == 58 || seconds == 56) { $('clock').className="label pull-right btn-warning"; }
+        else { $('clock').className="label pull-right btn-danger"; }
+        $('clock').innerHTML="Time Remaining: " + pminutes + ":" + pseconds;
+        }
+        else 
+        {
+        $('clock').className="label pull-right btn-inverse";
+        $('clock').innerHTML="Times Up! " + pminutes + ":" + pseconds;
         }
         } //myTimer
 
-        var myVar=setInterval(function(){myTimer()},1000);
+       
+
+        function updateClock(millisecondsRemaining) {
+        }
+
+        new MessageQueue({
+        roomId: 'room-a',
+        tickFunction: myTimer,
+        }).start();
         
     </script>
 
