@@ -11,6 +11,12 @@
     }
   });
 
+  var EndRoundMessage = Backbone.Model.extend({
+    getChatString: function() {
+      return 'The round has ended.';
+    }
+  });
+
   var NewRoundMessage = Backbone.Model.extend({
     getChatString: function() {
       return 'A new round has started!';
@@ -81,6 +87,8 @@
         return new ChatMessage(attrs, options);
       } else if (attrs.type == 'round-begins') {
         return new NewRoundMessage(attrs, options);
+      } else if (attrs.type == 'round-ends') {
+        return new EndRoundMessage(attrs, options);
       } else if (attrs.type == 'answer-solution') {
         return new TestMessage(attrs, options);
       } else if (attrs.type == 'resolve-input') {
