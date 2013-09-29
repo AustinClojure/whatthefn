@@ -7,7 +7,7 @@
 <body>
   <div id='app'>
     <div class='game'>
-      <p>Room ID: <input type='text' class='room' value='abc'></input></p>
+      <p>Room ID: <input type='text' class='room' value='the-room'></input></p>
       <p>Player Name: <input type='text' class='player' value='def'></input></p>
     </div>
 
@@ -106,7 +106,7 @@
       });
 
       this.mq = new MessageQueue({
-        roomId: 'abc',
+        roomId: 'the-room',
         handlerFunction: _.bind(this.messages.add, this.messages)
       });
       this.mq.start();

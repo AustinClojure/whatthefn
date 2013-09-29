@@ -8,7 +8,7 @@
 ;;initialize state
 
 (defn new-room [name]
-  {:name name :current-func nil :seen-functions '() :player-names #{} :state :waiting-for-players :winners #{} :channel nil})
+  {:name name :current-func nil :seen-functions '() :players #{} :state :waiting-for-players :winners #{} :channel nil})
 
 (defn get-initial-state []
   {:rooms {:the-room (new-room :the-room)}})
@@ -16,7 +16,7 @@
 ;;outgoing messages
 
 (defn send-player-in-room [room-id player-name status]
-  (msgs/new-message! room-id {:type :player-in-room? :room room-id :player player-name :in-room? status}))
+  (msgs/new-message! room-id {:type :player-in-room :room room-id :player player-name :in-room? status}))
 
 (defn send-fn-resolve-result [room-id input output]
   (msgs/new-message! room-id {:type :resolve-input :input input :output output}))
@@ -36,14 +36,21 @@
 ;;self messages
 
 (defn send-message-self [channel message]
-  (>!! channel message))
+  (go #(>!! channel message)))
 
 ;;state util
+
+(defn get-game-state [state room-id]
+  (get-in state [:rooms room-id :]))
 
 (defn get-current-function [state room-id]
   (let [rooms (:rooms state)
         room (rooms room-id)]
     (:current-func room)))
+
+(defn build-room-data [state room-id]
+  (let [f (get-current-function state room-id)]
+    {:name (:name f) :type (:type f) :description (:description f)}))
 
 (defn num-players [state room-id]
   "return the number of players in the room"
@@ -85,13 +92,22 @@
         players (get-in state [:rooms room-id :players])]
     (empty? (clojure.set/difference players winners))))
 
+(defn get-channel [state room-id]
+  (get-in state [:rooms room-id :channel]))
+
 ;;state updates(engine logic)
+
+(defn check-game-starts [state room-id]
+  (let [game-state ]))
 
 (defn remove-player-room [state room-id player-name]
   (let [rooms (:rooms state)
         room (rooms room-id)
         players (:players room)]
-    (update-in state [:rooms room-id :players] (disj (get-in state [:rooms room-id :players]) player-name))))
+    (prn (disj players player-name))
+    (prn room-id)
+    (prn room)
+    (assoc-in state [:rooms room-id :players] (disj players player-name))))
 
 (defn add-player-room [state room-id player-name]
   (let [rooms (:rooms state)
@@ -123,18 +139,22 @@
 (defmulti proc-message #(:type %2))
 
 (defmethod proc-message :resolve-input [state msg]
+  "we got an input to test"
   (let [room (:room msg)
         arg (:arg msg)
-        id (:func-id msg)]
-    (subm/submit-value-engine arg (partial send-fn-resolve-result room arg))
+        func (:function room)]
+    ;(subm/submit-value-engine arg (:body (get-current-function state room)) (partial send-fn-resolve-result room arg))
+    (fxns/test-fun (:id func) arg (partial send-fn-resolve-result room arg))
     state))
 
 (defmethod proc-message :test-solution [state msg]
+  "we got a function to grade"
   (let [f (:function msg)
         room (:room msg)]
-    (subm/submit-fn-engine f (get-current-function state room) (partial send-message-self (:channel state)) msg)))
+    (subm/submit-fn-engine f (:body (get-current-function state room)) (partial send-message-self (get-channel state room)) msg)))
 
 (defmethod proc-message :function-eval-result [state cb]
+  "we got our own message about a function grade back"
   (let [msg (:orig cb)
         f (:function msg)
         room (:room msg)
@@ -155,14 +175,16 @@
 (defmethod proc-message :player-left [state msg]
   (let [room-id (:room msg)
         player-name (:player msg)
-        new-room (remove-player-room state player-name room-id)]
+        new-room (remove-player-room state room-id player-name)]
     new-room))
 
 (defn start-engine []
-  (let [game-channel (evs/game-channel :the-room)
+  (let [room-id "the-room"
+        game-channel (evs/game-channel room-id)
         state-transition-function proc-message
         initial-state (get-initial-state)
-        state-with-channel (assoc-in initial-state [:rooms :the-room :channel] game-channel)]
+        state-with-function (refresh-function initial-state room-id)
+        state-with-channel (assoc-in state-with-function [:rooms room-id :channel] game-channel)]
     (go
       (loop [game-state state-with-channel]
         (let [next-event (<!! game-channel)]
