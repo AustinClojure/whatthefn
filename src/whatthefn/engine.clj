@@ -85,6 +85,8 @@
         players (get-in state [:rooms room-id :players])]
     (empty? (clojure.set/difference players winners))))
 
+(defn get-channel [state room-id]
+  (get-in state [:rooms room-id :channel]))
 ;;state updates(engine logic)
 
 (defn remove-player-room [state room-id player-name]
@@ -136,7 +138,7 @@
   "we got a function to grade"
   (let [f (:function msg)
         room (:room msg)]
-    (subm/submit-fn-engine f (:body (get-current-function state room)) (partial send-message-self (:channel state)) msg)))
+    (subm/submit-fn-engine f (:body (get-current-function state room)) (partial send-message-self (get-channel state room)) msg)))
 
 (defmethod proc-message :function-eval-result [state cb]
   "we got our own message about a function grade back"

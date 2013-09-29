@@ -41,7 +41,6 @@
   (let [shifted (+ alpha 64)]
     (char shifted)))
 
-
 (def function-bases
   #{'("a friend of lucas" :numeral fib "our first function" #{2 5 10})
     '("a prime problem" :numeral prime-factors "second function" #{7 9 24 12 30})

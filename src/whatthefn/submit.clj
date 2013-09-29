@@ -94,7 +94,7 @@
   (prn callback)
   "get the output for a single input"
   (let [sandbox (sb/sandbox)]
-    (sandbox '(def the-fn our-func))
+    (sandbox (list ))
     (try
       (callback (sandbox (list 'the-fn (clojure.edn/read-string value-str))))
       (catch Exception e

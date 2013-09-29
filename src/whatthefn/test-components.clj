@@ -10,12 +10,12 @@
    :room :the-room
    :arg arg})
 
-(def good-guess {:type :test-input
+(def good-guess {:type :test-solution
                  :room :the-room
                  :player "newbie"
                  :function "(defn the-fn [n] (* n 2))"})
 
-(def bad-guess {:type :test-input
+(def bad-guess {:type :test-solution
                 :room :the-room
                 :player "newbie"
                 :function "(defn the-fn [n] (+ n 2))"})
