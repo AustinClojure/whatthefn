@@ -13,7 +13,39 @@
   </head>
 
   <body>
-    
+    <!-- NAVBAR ============================================================================================ -->
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a href="#" class="brand"><span class="logo">WT<span class="fnlogo">&#131;</span></span></a>
+          <ul class="nav">
+            <li><a href="#"><i class="icon-home icon-white"></i> Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-tags icon-white"></i> Features <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#"><i class="icon-time"></i> Timed Problems</a></li>
+                <li><a href="#"><i class="icon-globe"></i> Collaboration</a></li>
+                <li><a href="#"><i class="icon-certificate"></i> Points & Karma</a></li>
+              </ul>
+            </li>   
+            <li><a href="#"><!--<i class="icon-info-sign icon-white">--></i> Users</a></li>
+            <!--<li><a href="#"><i class="icon-info-sign icon-white"></i> About</a></li>       -->
+          </ul>
+          <span class="hidden-phone">
+            <form class="navbar-form pull-right">
+              <button type="submit" class="btn "><i class="icon-user"></i> Sign Out</button>
+            </form>
+          </span><!--/.hidden-phone-->
+          <span class="visible-phone">
+            <form class="navbar-form">
+              <button type="submit" class="btn "><i class="icon-user"></i> Sign Out</button>
+            </form>
+          </span>          
+        </div><!--/.container-fluid-->
+      </div><!--/.navbar-inner-->
+    </div><!--/.navbar-->
+
+
     <!-- ACE EDITOR ====================================================================== -->
 
     <div class="container-fluid">      
@@ -111,6 +143,57 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
     <script src="js/gameapi.js"></script>
     <script src="js/messages.js"></script>
+
+    <!-- FOOTER =========================================================================================== -->
+    <footer>
+      <div class="container-fluid">
+        <div class="row-fluid">
+          <div class="span4">
+            <ul class="nav nav-list" hidden>
+              <li class="nav-header">From the Blog</li>
+              <li><a href="#">Becoming a Better Programmer</a></li>
+              <li><a href="#">Mastering Your Craft</a></li>
+              <li><a href="#">Collaborative Environments</a></li>
+              <li><a href="#">Competitive Spirit</a></li>
+              <li><a href="#">The Most Precious Resource</a></li>
+              <li><a href="#">Apprenticeship</a></li>
+              <li><a href="#">Learning with Instant Feedback</a></li>
+            </ul>          
+          </div><!--/.span4-->
+        </div><!--/.row-->
+        <div class="row-fluid">
+          <div class="span12 footerbottom">
+            <div class="span4">
+              <p class="left-align">&#169 2013 WhatTheFn, LLC. 
+                <a href="#TermsModal" data-toggle="modal"> Terms </a> <a href="#PrivacyModal" data-toggle="modal"> Privacy </a>
+              </p>
+            </div>
+            <div class="span4">                  
+              <span class="glyphicons" >
+                <p class="center-align" style="text-align: center">Icons: 
+                  <a href="http://creativecommons.org/licenses/by/3.0/">cc-by</a> 
+                  <a href="http://glyphicons.com/license/">glyphicons.com</a>
+                </p>
+              </span>
+            </div>
+            <div class="span4">
+              <p>
+                <span class="white pull-right">
+                  <i class="icon-large icon-bug"></i>
+                  <!--<img src="img/glyphicons_social_21_github_white.png">-->
+                  <img src="img/glyphicons_social_30_facebook_white.png">
+                  <img src="img/glyphicons_social_31_twitter_white.png">
+                  <img src="img/glyphicons_social_02_google_plus_white.png">
+                  <!--<img src="img/glyphicons_social_22_youtube_white.png"> -->
+                  <!--<img src="img/glyphicons_social_39_e-mail_white.png"> -->
+                </span>
+              </p>
+            </div><!--/.span5-->
+          </div><!--/.row-->
+        </div>
+      </div><!--/.container-->
+    </footer>   
+
 
     <!-- FROM THE ACE scrollable-page DEMO ============================================== -->
     <script>
@@ -242,6 +325,7 @@
         roomId: 'room-a',
         tickFunction: myTimer,
         handlerFunction: function(m){jQuery('#statusbox').append("\n" + m.getChatString())},
+
         });
         
         mq.start();
@@ -250,6 +334,9 @@
         mq.mock({type: "resolve", player: "Dar", testinput: "(f 3)", testoutput: "9"})
         mq.mock({type: "test", player: "Dar", testresult: "Succeeded!"})
         mq.mock({type: "leave", player: "Dar"})
+
+        this.api = new GameApi({roomId: 'room-a', playerId: "app.html"});
+        this.api.chat("Hi from app.html");
         
     </script>
 

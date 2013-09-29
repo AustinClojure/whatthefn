@@ -12,11 +12,7 @@ footer .span4, footer .span8, footer .span12 {background-color: transparent; }
 
 footer p { color: #777; }
 
-.footerbottom p .left-align { text-align: left;
-                   padding-left: 10px;
-                 }
-
-.footerbottom p .center-align { text-align: center;
+.footerbottom p { text-align: left;
                    padding-left: 10px;
                  }
 
