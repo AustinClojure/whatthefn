@@ -21,9 +21,7 @@
   [game-id]
   (dosync
     (when-not (@game-channels game-id)
-      (new-game! game-id)
-      ;(start-dummy-writer game-id)
-      )))
+      (new-game! game-id))))
 
 (defn game-channel
   [game-id]
@@ -33,6 +31,13 @@
 (defn write-to-game-channel!
   [game-id event]
   (>!! (game-channel game-id) event))
+
+(defn assert-engine-on-room
+  [game-id launcher]
+  (dosync
+    (when-not (@game-channels game-id)
+      (new-game! game-id)
+      (launcher game-id))))
 
 (defn example
   []

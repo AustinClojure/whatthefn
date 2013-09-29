@@ -41,6 +41,18 @@
   (let [shifted (+ alpha 64)]
     (char shifted)))
 
+(defn reverse-num [num]
+  (if (< num 0)
+    (- (reverse-num (- num)))
+    (loop [num num acc 0]
+           (if (= num 0)
+             acc
+             (recur (quot num 10)
+                    (+' (*' acc 10) (mod num 10)))))))
+
+(defn even-digits [n]
+  (count (filter #{\2 \4 \6 \8 \0} (str n))))
+
 (defn our-name [n]
   (let [nm "what the fn!"]
     (try (nth nm n)
@@ -74,6 +86,8 @@
     ["all together" :numeric-collection #(reduce + %) "add it up" #{#{2 3} #{1 3 5}}]
     ["how many are under ten?" :numeric-collection #(clojure.set/difference (range 10) %) "none are!" #{#{1 2 3} #{2 11 20}}]
     ["One...Two...Three....Three elements!" :numeric-collection count "no comment" #{#{1 2 3} #{7 1 0} #{2}}]})
+    ["An even-handed problem" :numeral even-digits "It's not odd at all." #{222 333 1234567890 -9876543210 50000}]
+    ["Mirror Mirror" :numeral reverse-num "on the wall" #{-1020301 -45 0 1000 1234 90909}]})
 
 (defn plus2 [n]
   (+ n 2))

@@ -7,7 +7,25 @@
 
   var Message = Backbone.Model.extend({
     getChatString: function() {
-      return 'Message id ' + this.get('id') + ': Time: ' + this.get('server-time-unix-millis');
+      return 'Message id ' + this.get('id') + ': Type: ' + this.get('type');
+    }
+  });
+
+  var NewRoundMessage = Backbone.Model.extend({
+    getChatString: function() {
+      return 'A new round has started!';
+    },
+
+    getEditorString: function() {
+      return ";====================================================\n" +
+             ";    Function Name: " + this.get('round-data').name + "\n" +
+             ";====================================================\n" +
+             ";    Function Type: " + this.get('round-data').type + "\n" +
+             ";====================================================\n" +
+             "(defn the-fn\n" +
+             "  [x]\n" +
+             "  ; Put your solution here\n" +
+             ")";
     }
   });
 
@@ -19,7 +37,7 @@
 
   var ResolveMessage =  Message.extend({
     getChatString: function() {
-      return this.get('player') + ': ' + this.get('testinput') + '-> ' + this.get('testoutput');
+      return this.get('player') + ': ' + this.get('input') + '-> ' + this.get('output');
     }
   });
 
@@ -29,13 +47,13 @@
     }
   });
 
-var JoinMessage =  Message.extend({
+  var JoinMessage =  Message.extend({
     getChatString: function() {
       return "*" + this.get('player') + ' has joined the game';
     }
   });
 
-var LeaveMessage =  Message.extend({
+  var LeaveMessage =  Message.extend({
     getChatString: function() {
       return "*" + this.get('player') + ' has left the game';
     }
@@ -45,20 +63,17 @@ var LeaveMessage =  Message.extend({
     model: function(attrs, options) {
       if (attrs.type == 'chat') {
         return new ChatMessage(attrs, options);
-      } 
-      else if (attrs.type == 'test') {
+      } else if (attrs.type == 'round-begins') {
+        return new NewRoundMessage(attrs, options);
+      } else if (attrs.type == 'test') {
         return new TestMessage(attrs, options);
-      }
-      else if (attrs.type == 'resolve') {
+      } else if (attrs.type == 'resolve-input') {
         return new ResolveMessage(attrs, options);
-      }
-      else if (attrs.type == 'join') {
+      } else if (attrs.type == 'player-in-room') {
         return new JoinMessage(attrs, options);
-      }
-      else if (attrs.type == 'leave') {
+      } else if (attrs.type == 'leave') {
         return new LeaveMessage(attrs, options);
-      }
-      else {
+      } else {
         return new Message(attrs, options);
       }
     }

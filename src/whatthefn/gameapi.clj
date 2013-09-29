@@ -1,43 +1,48 @@
 (ns whatthefn.gameapi
-  (:require [clojure.edn])
+  (:require [clojure.edn]
+            [whatthefn.engine :as engine])
   (:use [whatthefn.messages :only [new-message!]]
-        [whatthefn.events :only [write-to-game-channel!]]))
+        [whatthefn.events :only [write-to-game-channel! assert-engine-on-room]]))
+
+(defn username
+  [req]
+  (:username (:session req)))
 
 (defn chat
-  [{:keys [room-id player string]}]
+  [{:keys [room-id player string username]}]
   (new-message! room-id
                 {:type :chat
-                 :player player
+                 :player username
                  :string string}))
 
 (defn resolve-input
-  [{:keys [room-id player arg]}]
+  [{:keys [room-id player arg username]}]
   (write-to-game-channel! room-id
                           {:type :resolve-input
-                           :player player
+                           :player username
                            :arg (clojure.edn/read-string arg)
                            :room room-id}))
 
 (defn test-solution
-  [{:keys [room-id player function]}]
+  [{:keys [room-id player function username]}]
   (write-to-game-channel! room-id
                           {:type :test-solution
-                           :player player
+                           :player username
                            :function function
                            :room room-id}))
 
 (defn player-join-attempt
-  [{:keys [room-id player]}]
+  [{:keys [room-id player username]}]
   (write-to-game-channel! room-id
                           {:type :player-join-attempt
-                           :player player
+                           :player username
                            :room room-id}))
 
 (defn player-left
-  [{:keys [room-id player]}]
+  [{:keys [room-id player username]}]
   (write-to-game-channel! room-id
                           {:type :player-left
-                           :player player
+                           :player username
                            :room room-id}))
 
 (defn function-eval-result
@@ -53,10 +58,11 @@
 
 (defn handler
   [req]
-  (case (:type (:params req))
-    "chat" (chat (:params req))
-    "resolve-input" (resolve-input (:params req))
-    "test-solution" (test-solution (:params req))
-    "player-join-attempt" (player-join-attempt (:params req))
-    "player-left" (player-left (:params req))
-    "function-eval-result" (function-eval-result (:params req))))
+  (let [u (username req)]
+    (assert-engine-on-room (:room-id (:params req)) engine/start-engine)
+    (case (:type (:params req))
+      "chat" (chat (assoc (:params req) :username u))
+      "resolve-input" (resolve-input (assoc  (:params req) :username u))
+      "test-solution" (test-solution (assoc (:params req) :username u))
+      "player-join-attempt" (player-join-attempt (assoc (:params req) :username u))
+      "player-left" (player-left (assoc (:params req) :username u)))))

@@ -56,5 +56,5 @@
   [req]
   (let [{:keys [limit since room-id]} (:params req)]
     (->> (messages-since room-id since)
-         (take-last (maybe-parse-number limit 10))
+         (take-last (maybe-parse-number limit 100))
          compose-response)))
