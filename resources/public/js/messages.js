@@ -11,6 +11,12 @@
     }
   });
 
+  var NewRoundMessage = Backbone.Model.extend({
+    getChatString: function() {
+      return 'A new round has started!';
+    }
+  });
+
   var ChatMessage = Message.extend({
     getChatString: function() {
       return this.get('player') + ': ' + this.get('string');
@@ -19,7 +25,7 @@
 
   var ResolveMessage =  Message.extend({
     getChatString: function() {
-      return this.get('player') + ': ' + this.get('testinput') + '-> ' + this.get('testoutput');
+      return this.get('player') + ': ' + this.get('input') + '-> ' + this.get('output');
     }
   });
 
@@ -29,13 +35,13 @@
     }
   });
 
-var JoinMessage =  Message.extend({
+  var JoinMessage =  Message.extend({
     getChatString: function() {
       return "*" + this.get('player') + ' has joined the game';
     }
   });
 
-var LeaveMessage =  Message.extend({
+  var LeaveMessage =  Message.extend({
     getChatString: function() {
       return "*" + this.get('player') + ' has left the game';
     }
@@ -45,20 +51,17 @@ var LeaveMessage =  Message.extend({
     model: function(attrs, options) {
       if (attrs.type == 'chat') {
         return new ChatMessage(attrs, options);
-      } 
-      else if (attrs.type == 'test') {
+      } else if (attrs.type == 'new-round') {
+        return new NewRoundMessage(attrs, options);
+      } else if (attrs.type == 'test') {
         return new TestMessage(attrs, options);
-      }
-      else if (attrs.type == 'resolve') {
+      } else if (attrs.type == 'resolve-input') {
         return new ResolveMessage(attrs, options);
-      }
-      else if (attrs.type == 'join') {
+      } else if (attrs.type == 'join') {
         return new JoinMessage(attrs, options);
-      }
-      else if (attrs.type == 'leave') {
+      } else if (attrs.type == 'leave') {
         return new LeaveMessage(attrs, options);
-      }
-      else {
+      } else {
         return new Message(attrs, options);
       }
     }

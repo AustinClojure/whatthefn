@@ -3,6 +3,10 @@
   (:use [whatthefn.messages :only [new-message!]]
         [whatthefn.events :only [write-to-game-channel!]]))
 
+(defn username
+  [req]
+  (:username (:session req)))
+
 (defn chat
   [{:keys [room-id player string]}]
   (new-message! room-id
