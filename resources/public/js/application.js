@@ -8,7 +8,7 @@ function handleMessage(msg) {
     //jQuery('#Victor').text(msg.get('player') + " won the round!").appendTo('#RoundModal');
     //jQuery('#RoundModal').modal('show');
   }
-  jQuery('#statusbox').scrollTop(jQuery('#statusbox').height());
+  jQuery('#statusbox').scrollTop(jQuery('#statusbox')[0].scrollHeight);
 }
 
 // Much of this is from the Ace editor's scrollable demo
